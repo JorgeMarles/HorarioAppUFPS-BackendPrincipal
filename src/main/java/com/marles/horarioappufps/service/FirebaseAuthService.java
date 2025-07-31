@@ -21,8 +21,9 @@ public class FirebaseAuthService {
 
     public User getUserByToken(String idToken) throws FirebaseAuthException {
         FirebaseToken token = verifyToken(idToken);
-        String email =  token.getEmail();
-        String uid  = token.getUid();
-        return userService.getOrCreateUser(email, uid);
+        String uid = token.getUid();
+        String email = token.getEmail();
+
+        return userService.getOrCreateUser(uid, email);
     }
 }
