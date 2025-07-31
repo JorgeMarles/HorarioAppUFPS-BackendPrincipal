@@ -1,12 +1,16 @@
 package com.marles.horarioappufps.service;
 
 import com.marles.horarioappufps.exception.UserNotFoundException;
+import com.marles.horarioappufps.model.Role;
 import com.marles.horarioappufps.model.User;
+import com.marles.horarioappufps.repository.RoleRepository;
 import com.marles.horarioappufps.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.management.relation.RoleNotFoundException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +20,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     private Optional<User> findUserByUid(String uid) {
         return userRepository.findById(uid);
@@ -37,6 +44,10 @@ public class UserService {
         User user = new User();
         user.setUid(uid);
         user.setEmail(email);
+
+        user.setRoles(new HashSet<>());
+        Role role = roleRepository.findByName("ROLE_USER").orElse(null);
+        user.getRoles().add(role);
 
         return userRepository.save(user);
     }
