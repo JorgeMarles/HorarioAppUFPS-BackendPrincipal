@@ -11,5 +11,6 @@ public class PensumCreationDto {
     private Long id;
     private String name;
     private int semesters;
+    private boolean updateTeachers;
     private List<SubjectCreationDto> subjects;
 }

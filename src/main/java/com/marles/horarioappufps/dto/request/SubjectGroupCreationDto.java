@@ -1,6 +1,5 @@
 package com.marles.horarioappufps.dto.request;
 
-import com.marles.horarioappufps.model.GroupState;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
