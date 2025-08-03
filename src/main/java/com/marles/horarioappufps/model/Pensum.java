@@ -26,6 +26,6 @@ public class Pensum {
     @Column(nullable = false)
     private int semesters;
 
-    @OneToMany(mappedBy = "pensum")
+    @OneToMany(mappedBy = "pensum", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Subject> subjects = new LinkedList<>();
 }

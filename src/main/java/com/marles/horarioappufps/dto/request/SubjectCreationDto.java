@@ -17,4 +17,5 @@ public class SubjectCreationDto {
     private int semester;
     private int requiredCredits;
     private List<SubjectGroupCreationDto> groups;
+    private List<String> requisites;
 }
