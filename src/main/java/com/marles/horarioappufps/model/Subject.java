@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -25,6 +29,7 @@ public class Subject {
     private int hours;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private SubjectType type;
 
     @Column(nullable = false)
@@ -36,4 +41,15 @@ public class Subject {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pensum_id", nullable = false)
     private Pensum pensum;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "requisite",
+            joinColumns = @JoinColumn(name = "subject_id"),
+            inverseJoinColumns = @JoinColumn(name = "requisite_id")
+    )
+    private List<Subject> requisites = new LinkedList<>();
+
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<SubjectGroup> groups = new LinkedList<>();
 }

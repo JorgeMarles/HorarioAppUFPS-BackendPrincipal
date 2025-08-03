@@ -1,0 +1,37 @@
+package com.marles.horarioappufps.model;
+
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Data
+@NoArgsConstructor
+public class Session {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    /**
+     * 0: Monday
+     * ...
+     * 5: Saturday
+     */
+    @Column(nullable = false)
+    private int day;
+
+    /**
+     * 0: 06:00 - 07:00
+     * ...
+     * 15: 21:00 - 22:00
+     */
+    @Column(nullable = false)
+    private int hour;
+
+    @Column(nullable = false)
+    private String classroom;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subject_group_id", nullable = false)
+    private SubjectGroup group;
+}
