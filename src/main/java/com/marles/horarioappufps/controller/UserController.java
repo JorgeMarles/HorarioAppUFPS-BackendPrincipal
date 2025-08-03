@@ -26,20 +26,20 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserDto>> getAllUsers() {
         List<User> users = userService.getAllUsers();
-        List<UserDto> response = UserDto.parseFrom(users);
+        List<UserDto> response = UserDto.parseFromDto(users);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{uid}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDto> getUserByUid(@PathVariable String uid) {
-        return ResponseEntity.ok(UserDto.parseFrom(userService.getUserByUid(uid)));
+        return ResponseEntity.ok(UserDto.parseFromDto(userService.getUserByUid(uid)));
     }
 
     @GetMapping("/my")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<UserDto> getMyUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         String uid = userPrincipal.getUsername();
-        return ResponseEntity.ok(UserDto.parseFrom(userService.getUserByUid(uid)));
+        return ResponseEntity.ok(UserDto.parseFromDto(userService.getUserByUid(uid)));
     }
 }
