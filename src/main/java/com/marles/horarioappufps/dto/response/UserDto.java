@@ -4,10 +4,8 @@ import com.marles.horarioappufps.model.Role;
 import com.marles.horarioappufps.model.User;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 public class UserDto {
@@ -16,7 +14,7 @@ public class UserDto {
     private String email;
     private List<String> roles = new LinkedList<>();
 
-    public static UserDto parseFrom(User user){
+    public static UserDto parseFromDto(User user){
         UserDto userDto = new UserDto();
         userDto.setUid(user.getUid());
         userDto.setEmail(user.getEmail());
@@ -24,10 +22,10 @@ public class UserDto {
         return userDto;
     }
 
-    public static List<UserDto> parseFrom(List<User> users){
+    public static List<UserDto> parseFromDto(List<User> users){
         List<UserDto> userDtos = new LinkedList<>();
         for(User user : users){
-            userDtos.add(UserDto.parseFrom(user));
+            userDtos.add(UserDto.parseFromDto(user));
         }
         return userDtos;
     }
