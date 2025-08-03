@@ -31,9 +31,8 @@ public class SubjectGroup {
     @Column(nullable = false)
     private String teacher;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private GroupState groupState;
+    private boolean isCurrentTeacher;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id", nullable = false)
