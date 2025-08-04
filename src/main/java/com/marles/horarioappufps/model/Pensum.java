@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,5 +28,5 @@ public class Pensum {
     private int semesters;
 
     @OneToMany(mappedBy = "pensum", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Subject> subjects = new LinkedList<>();
+    private List<Subject> subjects = new ArrayList<>();
 }
