@@ -50,6 +50,6 @@ public class Subject {
     )
     private List<Subject> requisites = new LinkedList<>();
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<SubjectGroup> groups = new LinkedList<>();
 }

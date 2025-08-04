@@ -31,14 +31,13 @@ public class SubjectGroup {
     @Column(nullable = false)
     private String teacher;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private GroupState groupState;
+    private boolean isCurrentTeacher;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
 
-    @OneToMany(mappedBy = "group")
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Session> sessions = new LinkedList<>();
 }

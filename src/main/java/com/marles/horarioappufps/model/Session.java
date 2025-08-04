@@ -26,7 +26,15 @@ public class Session {
      * 15: 21:00 - 22:00
      */
     @Column(nullable = false)
-    private int hour;
+    private int beginHour;
+
+    /**
+     * 0: 06:00 - 07:00
+     * ...
+     * 15: 21:00 - 22:00
+     */
+    @Column(nullable = false)
+    private int endHour;
 
     @Column(nullable = false)
     private String classroom;

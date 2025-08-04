@@ -13,8 +13,9 @@ public class SubjectCreationDto {
     private String name;
     private int credits;
     private int hours;
-    private SubjectType subjectType;
     private int semester;
-    private int requiredCredits;
+    private int requiredCredits = 0;
+    private SubjectType type;
     private List<SubjectGroupCreationDto> groups;
+    private List<String> requisites;
 }

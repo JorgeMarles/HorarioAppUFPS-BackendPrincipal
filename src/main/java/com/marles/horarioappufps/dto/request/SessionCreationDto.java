@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SessionCreationDto {
     private int day;
-    private int hour;
+    private int beginHour;
+    private int endHour;
     private String classroom;
 }
