@@ -21,12 +21,12 @@ public class PensumController {
         this.pensumService = pensumService;
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<PensumInfoDto> getPensum(){
         return ResponseEntity.ok(new PensumInfoDto(pensumService.getPensum()));
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<PensumInfoDto> savePensum(@RequestBody PensumCreationDto pensumCreationDto){
         Pensum pensum = pensumService.savePensum(pensumCreationDto);
         return ResponseEntity.ok(new PensumInfoDto(pensum));
