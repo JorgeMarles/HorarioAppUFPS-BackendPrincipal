@@ -18,10 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional
@@ -165,6 +162,7 @@ public class PensumService {
     private void updateFields(Pensum pensum, PensumCreationDto pensumCreationDto) {
         pensum.setName(pensumCreationDto.getName());
         pensum.setSemesters(pensumCreationDto.getSemesters());
+        pensum.setLastModified(new Date());
     }
 
     private void updateFields(Subject subject, SubjectCreationDto subjectCreationDto) {
