@@ -35,6 +35,14 @@ public class PensumService {
 
     private boolean updateTeachers;
 
+    public Pensum getPensum(){
+        return getPensum(1L);
+    }
+
+    public Pensum getPensum(Long id) {
+        return pensumRepository.findById(id).orElseThrow(() -> new PensumNotFoundException(id));
+    }
+
     @Autowired
     public PensumService(
             PensumRepository pensumRepository,
@@ -143,7 +151,7 @@ public class PensumService {
 
     public SubjectGroup createOrUpdateSubjectGroup(SubjectGroupCreationDto subjectGroupCreationDto, Subject subject) {
         SubjectGroup subjectGroup = new SubjectGroup();
-        Optional<SubjectGroup> subjectGroupOpt = subjectGroupRepository.findByCode(subjectGroupCreationDto.getCode());
+        Optional<SubjectGroup> subjectGroupOpt = subjectGroupRepository.findByCode(subjectGroupCreationDto.getName());
         if (subjectGroupOpt.isPresent()) {
             subjectGroup = subjectGroupOpt.get();
         }
@@ -170,22 +178,33 @@ public class PensumService {
     }
 
     private void updateFields(SubjectGroup subjectGroup, SubjectGroupCreationDto subjectGroupCreationDto) {
-        subjectGroup.setCode(subjectGroupCreationDto.getCode());
-        subjectGroup.setProgram(subjectGroupCreationDto.getProgram());
+        subjectGroup.setCode(subjectGroupCreationDto.getName());
+        if(subjectGroupCreationDto.getProgram() != null) {
+            subjectGroup.setProgram(subjectGroupCreationDto.getProgram());
+        } else {
+            subjectGroup.setProgram(subjectGroupCreationDto.getName().substring(0,3));
+        }
         subjectGroup.setAvailableCapacity(subjectGroupCreationDto.getAvailableCapacity());
         subjectGroup.setMaxCapacity(subjectGroupCreationDto.getMaxCapacity());
-        if (!"-".equals(subjectGroupCreationDto.getTeacher())) {
+        if(subjectGroup.getTeacher() == null) {
             subjectGroup.setTeacher(subjectGroupCreationDto.getTeacher());
             subjectGroup.setCurrentTeacher(true);
-        } else if (this.updateTeachers) {
-            subjectGroup.setCurrentTeacher(false);
+        } else {
+            if("-".equals(subjectGroup.getTeacher())) {
+                subjectGroup.setTeacher(subjectGroupCreationDto.getTeacher());
+                subjectGroup.setCurrentTeacher(true);
+            } else if("-".equals(subjectGroupCreationDto.getTeacher())) {
+                subjectGroup.setCurrentTeacher(false);
+            }
         }
+
     }
 
     private void updateFields(Session session, SessionCreationDto sessionCreationDto) {
         session.setClassroom(sessionCreationDto.getClassroom());
         session.setDay(sessionCreationDto.getDay());
-        session.setHour(sessionCreationDto.getHour());
+        session.setBeginHour(sessionCreationDto.getBeginHour());
+        session.setEndHour(sessionCreationDto.getEndHour());
     }
 
 }
