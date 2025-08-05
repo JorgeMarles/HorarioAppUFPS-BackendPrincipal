@@ -188,14 +188,13 @@ public class PensumService {
             subjectGroup.setTeacher(subjectGroupCreationDto.getTeacher());
             subjectGroup.setCurrentTeacher(true);
         } else {
-            if("-".equals(subjectGroup.getTeacher())) {
+            if(!"-".equals(subjectGroupCreationDto.getTeacher())) {
                 subjectGroup.setTeacher(subjectGroupCreationDto.getTeacher());
                 subjectGroup.setCurrentTeacher(true);
-            } else if("-".equals(subjectGroupCreationDto.getTeacher())) {
-                subjectGroup.setCurrentTeacher(false);
+            } else if("-".equals(subjectGroup.getTeacher())) {
+                subjectGroup.setCurrentTeacher(true);
             }
         }
-
     }
 
     private void updateFields(Session session, SessionCreationDto sessionCreationDto) {
