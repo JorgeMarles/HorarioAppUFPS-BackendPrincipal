@@ -22,47 +22,58 @@ public class OverlapValidator {
     private final SegmentTree segmentTree = new SegmentTree(DAYS * HOUR_SPACES);
     private final List<SubjectGroup> subjectGroups = new ArrayList<>(20);
 
-    public void addList(List<SubjectGroup> subjectGroups){
-        for (SubjectGroup subjectGroup : subjectGroups){
+    public void addList(List<SubjectGroup> subjectGroups) {
+        for (SubjectGroup subjectGroup : subjectGroups) {
             this.add(subjectGroup);
         }
     }
 
-    public void add(SubjectGroup subjectGroup) throws ScheduleConflictException{
+    public void add(SubjectGroup subjectGroup) throws ScheduleConflictException {
         SubjectGroup overlapped = this.overlaps(subjectGroup);
-        if(overlapped != null){
+        if (overlapped != null) {
             throw new ScheduleConflictException(subjectGroup.getCode(), overlapped.getCode());
         }
-        for(Session session : subjectGroup.getSessions()){
+        for (Session session : subjectGroup.getSessions()) {
             this.add(session, this.subjectGroups.size());
         }
         this.subjectGroups.add(subjectGroup);
     }
 
-    public void add(Session session, int value){
-        int i = session.getBeginHour() * session.getDay();
-        int j = session.getEndHour() * session.getDay();
+    public void add(Session session, int value) {
+        log.info("Adding session {} {} {}", session.getDay(), session.getBeginHour(), session.getEndHour());
+        int i = getBeginIndex(session);
+        int j = getEndIndex(session);
+        log.info("Adding group {} to in range [{},{})", value, i, j);
         this.segmentTree.update(i, j, value);
     }
 
-    public SubjectGroup overlaps(SubjectGroup group){
-        for (Session session : group.getSessions()){
+    public SubjectGroup overlaps(SubjectGroup group) {
+        for (Session session : group.getSessions()) {
             SubjectGroup ans = overlaps(session);
-            if(ans != null){
+            if (ans != null) {
                 return ans;
             }
         }
         return null;
     }
 
-    public SubjectGroup overlaps(Session session){
-        int i = session.getBeginHour() * session.getDay();
-        int j = session.getEndHour() * session.getDay();
+    public SubjectGroup overlaps(Session session) {
+        int i = getBeginIndex(session);
+        int j = getEndIndex(session);
         int idx = this.segmentTree.query(i, j);
+        log.info("Overlapping group in range [{},{}): {}", i, j, idx);
         SubjectGroup ans = null;
-        if(idx != -1){
+        if (idx != -1) {
             ans = subjectGroups.get(idx);
         }
         return ans;
+    }
+
+    private int getBeginIndex(Session session){
+        return session.getBeginHour() + (HOUR_SPACES * session.getDay());
+    }
+
+    private int getEndIndex(Session session){
+        return session.getEndHour() + (HOUR_SPACES * session.getDay()) - 1;
     }
 }
