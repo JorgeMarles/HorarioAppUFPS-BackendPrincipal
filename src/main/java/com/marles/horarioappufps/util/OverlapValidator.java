@@ -40,10 +40,8 @@ public class OverlapValidator {
     }
 
     public void add(Session session, int value) {
-        log.info("Adding session {} {} {}", session.getDay(), session.getBeginHour(), session.getEndHour());
         int i = getBeginIndex(session);
         int j = getEndIndex(session);
-        log.info("Adding group {} to in range [{},{})", value, i, j);
         this.segmentTree.update(i, j, value);
     }
 
@@ -61,7 +59,6 @@ public class OverlapValidator {
         int i = getBeginIndex(session);
         int j = getEndIndex(session);
         int idx = this.segmentTree.query(i, j);
-        log.info("Overlapping group in range [{},{}): {}", i, j, idx);
         SubjectGroup ans = null;
         if (idx != -1) {
             ans = subjectGroups.get(idx);
