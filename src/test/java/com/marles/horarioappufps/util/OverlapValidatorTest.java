@@ -81,7 +81,7 @@ public class OverlapValidatorTest {
     }
 
     @Test
-    public void testOverlapException_overlaps_true_1(){
+    public void testOverlap_overlaps_true_1(){
         SubjectGroup sg1 = new SubjectGroup();
         sg1.setCode("1155555-A");
         SubjectGroup sg2 = new SubjectGroup();
@@ -119,7 +119,7 @@ public class OverlapValidatorTest {
     }
 
     @Test
-    public void testOverlapException_overlaps_true_2(){
+    public void testOverlap_overlaps_true_2(){
         SubjectGroup sg1 = new SubjectGroup();
         sg1.setCode("1155555-A");
         SubjectGroup sg2 = new SubjectGroup();
@@ -157,7 +157,7 @@ public class OverlapValidatorTest {
     }
 
     @Test
-    public void testOverlapException_overlaps_true_3(){
+    public void testOverlap_overlaps_true_3(){
         SubjectGroup sg1 = new SubjectGroup();
         sg1.setCode("1155555-A");
         SubjectGroup sg2 = new SubjectGroup();
@@ -195,7 +195,7 @@ public class OverlapValidatorTest {
     }
 
     @Test
-    public void testOverlapException_overlaps_false(){
+    public void testOverlap_overlaps_false(){
         SubjectGroup sg1 = new SubjectGroup();
         sg1.setCode("1155555-A");
         SubjectGroup sg2 = new SubjectGroup();
@@ -226,6 +226,34 @@ public class OverlapValidatorTest {
         s31.setDay(1);
         s31.setBeginHour(0);
         s31.setEndHour(2);
+
+        assertNull(overlapValidator.overlaps(sg3));
+    }
+
+    @Test
+    public void testOverlap_overlaps_false_2(){
+        SubjectGroup sg1 = new SubjectGroup();
+        sg1.setCode("1155555-A");
+
+        Session s11 = new Session();
+        s11.setDay(5);
+        s11.setBeginHour(15);
+        s11.setEndHour(16);
+
+        sg1.setSessions(List.of(s11));
+
+        List<SubjectGroup> subjectGroups = List.of(sg1);
+
+        OverlapValidator overlapValidator = new OverlapValidator();
+
+        overlapValidator.addList(subjectGroups);
+
+        SubjectGroup sg3 = new SubjectGroup();
+        sg3.setCode("1155555-C");
+        Session s31 = new Session();
+        s31.setDay(5);
+        s31.setBeginHour(14);
+        s31.setEndHour(15);
 
         assertNull(overlapValidator.overlaps(sg3));
     }

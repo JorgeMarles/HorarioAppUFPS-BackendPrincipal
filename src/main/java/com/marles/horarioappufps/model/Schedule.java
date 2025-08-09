@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Data
@@ -29,6 +29,6 @@ public class Schedule {
     @CollectionTable(name = "schedule_enrollments",
             joinColumns = @JoinColumn(name = "schedule_id"))
     @Column(name = "group_code")
-    private List<String> codes = new LinkedList<>();
+    private Set<String> codes = new HashSet<>();
 
 }
