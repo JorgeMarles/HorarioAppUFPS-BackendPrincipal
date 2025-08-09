@@ -7,6 +7,7 @@ import com.marles.horarioappufps.service.PensumService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,12 +22,14 @@ public class PensumController {
         this.pensumService = pensumService;
     }
 
-    @GetMapping("")
+    @GetMapping("/")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<PensumInfoDto> getPensum(){
         return ResponseEntity.ok(new PensumInfoDto(pensumService.getPensum()));
     }
 
-    @PostMapping("")
+    @PostMapping("/")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PensumInfoDto> savePensum(@RequestBody PensumCreationDto pensumCreationDto){
         Pensum pensum = pensumService.savePensum(pensumCreationDto);
         return ResponseEntity.ok(new PensumInfoDto(pensum));
