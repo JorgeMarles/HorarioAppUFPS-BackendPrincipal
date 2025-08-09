@@ -18,9 +18,9 @@ import java.util.List;
 public class OverlapValidator {
 
     private final int DAYS = 6;
-    private final int HOUR_SPACES = 16;
+    private final int HOUR_SPACES = 17;
     private final SegmentTree segmentTree = new SegmentTree(DAYS * HOUR_SPACES);
-    private final List<SubjectGroup> subjectGroups = new ArrayList<>(20);
+    private final List<SubjectGroup> subjectGroups = new ArrayList<>(10);
 
     public void addList(List<SubjectGroup> subjectGroups) {
         for (SubjectGroup subjectGroup : subjectGroups) {

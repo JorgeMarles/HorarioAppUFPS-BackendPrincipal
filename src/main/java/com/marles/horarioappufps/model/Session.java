@@ -21,17 +21,19 @@ public class Session {
     private int day;
 
     /**
-     * 0: 06:00 - 07:00
+     * 0: 06:00
      * ...
-     * 15: 21:00 - 22:00
+     * 15: 21:00
+     * 16: 22:00
      */
     @Column(nullable = false)
     private int beginHour;
 
     /**
-     * 0: 06:00 - 07:00
+     * 0: 06:00
      * ...
-     * 15: 21:00 - 22:00
+     * 15: 21:00
+     * 16: 22:00
      */
     @Column(nullable = false)
     private int endHour;
