@@ -2,7 +2,6 @@ package com.marles.horarioappufps.init;
 
 import com.marles.horarioappufps.model.Role;
 import com.marles.horarioappufps.repository.RoleRepository;
-import com.marles.horarioappufps.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 

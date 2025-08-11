@@ -62,7 +62,6 @@ public class ScheduleController {
     @DeleteMapping("/{scheduleId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<String> deleteSchedule(@PathVariable Long scheduleId, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        String uid = userPrincipal.getUsername();
         validatePermissions(scheduleId, userPrincipal);
         scheduleService.deleteSchedule(scheduleId);
         return ResponseEntity.ok("Horario eliminado correctamente");

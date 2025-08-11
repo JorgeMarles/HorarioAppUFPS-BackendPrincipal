@@ -30,8 +30,6 @@ public class PensumService {
     private final SubjectGroupRepository subjectGroupRepository;
     private final SessionRepository sessionRepository;
 
-    private boolean updateTeachers;
-
     public Pensum getPensum(){
         return getPensum(1L);
     }
@@ -60,8 +58,6 @@ public class PensumService {
         }
 
         updateFields(pensum, pensumCreationDto);
-
-        this.updateTeachers = pensumCreationDto.isUpdateTeachers();
 
         pensum = pensumRepository.save(pensum);
 

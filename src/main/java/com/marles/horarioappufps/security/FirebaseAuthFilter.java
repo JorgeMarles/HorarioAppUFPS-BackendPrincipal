@@ -1,7 +1,6 @@
 package com.marles.horarioappufps.security;
 
 import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseToken;
 import com.marles.horarioappufps.model.User;
 import com.marles.horarioappufps.service.FirebaseAuthService;
 import jakarta.servlet.FilterChain;
