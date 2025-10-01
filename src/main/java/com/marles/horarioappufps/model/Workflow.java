@@ -1,6 +1,7 @@
 package com.marles.horarioappufps.model;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,5 +36,10 @@ public class Workflow {
     private WorkflowState state;
 
     @OneToMany(mappedBy = "workflow", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Job> jobs;
+    private List<Job> jobs = new LinkedList<>();
+
+    public void addJob(Job job) {
+        this.jobs.add(job);
+        job.setWorkflow(this);
+    }
 }
