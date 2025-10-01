@@ -150,7 +150,7 @@ public class PensumServiceTest {
         when(subjectGroupRepository.findByCode("1155555-A")).thenReturn(Optional.of(subjectGroup));
         when(subjectGroupRepository.save(argumentCaptor.capture())).thenReturn(subjectGroup);
 
-        pensumService.createOrUpdateSubjectGroup(sgdto, null);
+        pensumService.createOrUpdateSubjectGroup(sgdto,  null, true);
 
         SubjectGroup result =  argumentCaptor.getValue();
 
@@ -176,7 +176,7 @@ public class PensumServiceTest {
         when(subjectGroupRepository.findByCode("1155555-A")).thenReturn(Optional.of(subjectGroup));
         when(subjectGroupRepository.save(argumentCaptor.capture())).thenReturn(subjectGroup);
 
-        pensumService.createOrUpdateSubjectGroup(sgdto, null);
+        pensumService.createOrUpdateSubjectGroup(sgdto, null, true);
 
         SubjectGroup result =  argumentCaptor.getValue();
 
@@ -202,7 +202,7 @@ public class PensumServiceTest {
         when(subjectGroupRepository.findByCode("1155555-A")).thenReturn(Optional.of(subjectGroup));
         when(subjectGroupRepository.save(argumentCaptor.capture())).thenReturn(subjectGroup);
 
-        pensumService.createOrUpdateSubjectGroup(sgdto, null);
+        pensumService.createOrUpdateSubjectGroup(sgdto, null, true);
 
         SubjectGroup result =  argumentCaptor.getValue();
 
@@ -228,7 +228,7 @@ public class PensumServiceTest {
         when(subjectGroupRepository.findByCode("1155555-A")).thenReturn(Optional.of(subjectGroup));
         when(subjectGroupRepository.save(argumentCaptor.capture())).thenReturn(subjectGroup);
 
-        pensumService.createOrUpdateSubjectGroup(sgdto, null);
+        pensumService.createOrUpdateSubjectGroup(sgdto, null, true);
 
         SubjectGroup result =  argumentCaptor.getValue();
 

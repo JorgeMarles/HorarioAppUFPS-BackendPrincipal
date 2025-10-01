@@ -61,12 +61,12 @@ public class PensumService {
 
         pensum = pensumRepository.save(pensum);
 
-        processSubjects(pensum, pensumCreationDto.getSubjects());
+        processSubjects(pensum, pensumCreationDto.getSubjects(), pensumCreationDto.isUpdateTeachers());
 
         return pensum;
     }
 
-    private void processSubjects(Pensum pensum, List<SubjectCreationDto> subjectCreationDtos) {
+    private void processSubjects(Pensum pensum, List<SubjectCreationDto> subjectCreationDtos, boolean updateTeachers) {
         pensum.getSubjects().clear();
 
         Map<String, Subject> subjectMap = new HashMap<>();
@@ -80,7 +80,7 @@ public class PensumService {
         for (int i = 0; i < subjectCreationDtos.size(); i++) {
             SubjectCreationDto subjectCreationDto = subjectCreationDtos.get(i);
             Subject subject = pensum.getSubjects().get(i);
-            processGroups(subject, subjectCreationDto.getGroups());
+            processGroups(subject, subjectCreationDto.getGroups(), updateTeachers);
         }
 
         for (int i = 0; i < subjectCreationDtos.size(); i++) {
@@ -114,11 +114,11 @@ public class PensumService {
         return subjectRepository.save(subject);
     }
 
-    private void processGroups(Subject subject, List<SubjectGroupCreationDto> subjectGroupCreationDtos) {
+    private void processGroups(Subject subject, List<SubjectGroupCreationDto> subjectGroupCreationDtos, boolean updateTeachers) {
         subject.getGroups().clear();
 
         for (SubjectGroupCreationDto subjectGroupCreationDto : subjectGroupCreationDtos) {
-            SubjectGroup subjectGroup = createOrUpdateSubjectGroup(subjectGroupCreationDto, subject);
+            SubjectGroup subjectGroup = createOrUpdateSubjectGroup(subjectGroupCreationDto, subject, updateTeachers);
             subject.getGroups().add(subjectGroup);
 
             processSessions(subjectGroup, subjectGroupCreationDto.getSessions());
@@ -142,14 +142,14 @@ public class PensumService {
         return sessionRepository.save(session);
     }
 
-    public SubjectGroup createOrUpdateSubjectGroup(SubjectGroupCreationDto subjectGroupCreationDto, Subject subject) {
+    public SubjectGroup createOrUpdateSubjectGroup(SubjectGroupCreationDto subjectGroupCreationDto, Subject subject, boolean updateTeachers) {
         SubjectGroup subjectGroup = new SubjectGroup();
         Optional<SubjectGroup> subjectGroupOpt = subjectGroupRepository.findByCode(subjectGroupCreationDto.getName());
         if (subjectGroupOpt.isPresent()) {
             subjectGroup = subjectGroupOpt.get();
         }
 
-        updateFields(subjectGroup, subjectGroupCreationDto);
+        updateFields(subjectGroup, subjectGroupCreationDto, updateTeachers);
         subjectGroup.setSubject(subject);
 
         return subjectGroupRepository.save(subjectGroup);
@@ -171,7 +171,7 @@ public class PensumService {
         subject.setType(subjectCreationDto.getType());
     }
 
-    private void updateFields(SubjectGroup subjectGroup, SubjectGroupCreationDto subjectGroupCreationDto) {
+    private void updateFields(SubjectGroup subjectGroup, SubjectGroupCreationDto subjectGroupCreationDto, boolean updateTeachers) {
         subjectGroup.setCode(subjectGroupCreationDto.getName());
         if(subjectGroupCreationDto.getProgram() != null) {
             subjectGroup.setProgram(subjectGroupCreationDto.getProgram());
@@ -180,6 +180,9 @@ public class PensumService {
         }
         subjectGroup.setAvailableCapacity(subjectGroupCreationDto.getAvailableCapacity());
         subjectGroup.setMaxCapacity(subjectGroupCreationDto.getMaxCapacity());
+        if(!updateTeachers) {
+            return;
+        }
         if(subjectGroup.getTeacher() == null) {
             subjectGroup.setTeacher(subjectGroupCreationDto.getTeacher());
             subjectGroup.setCurrentTeacher(true);
