@@ -23,7 +23,7 @@ public class FirebaseAuthService {
         FirebaseToken token = verifyToken(idToken);
         String uid = token.getUid();
         String email = token.getEmail();
-
-        return userService.getOrCreateUser(uid, email);
+        String name = token.getName();
+        return userService.getOrCreateUser(uid, email, name);
     }
 }
