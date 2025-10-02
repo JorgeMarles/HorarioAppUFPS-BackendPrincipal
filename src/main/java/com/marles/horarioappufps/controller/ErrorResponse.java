@@ -2,7 +2,6 @@ package com.marles.horarioappufps.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Data
