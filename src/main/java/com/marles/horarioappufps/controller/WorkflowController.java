@@ -12,6 +12,7 @@ import com.marles.horarioappufps.service.WorkflowService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class WorkflowController {
     }
 
     @GetMapping("")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<WorkflowItemDto>> getAllWorkflows() {
         List<Workflow> list = workflowService.getAll();
         List<WorkflowItemDto> data = WorkflowItemDto.fromList(list);
@@ -37,24 +39,28 @@ public class WorkflowController {
     }
 
     @GetMapping("/{uuid}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<WorkflowDto> getWorkflow(@PathVariable UUID uuid) {
         Workflow workflow = workflowService.getById(uuid);
         return ResponseEntity.ok(new WorkflowDto(workflow));
     }
 
     @PostMapping("/start")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UUID> startWorkflow(@RequestBody PensumAsyncRequestCreationDto dto) {
         UUID workflow = workflowService.startProcess(dto);
         return ResponseEntity.ok(workflow);
     }
 
     @PostMapping("/end/{uuid}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UUID> endWorkflow(@PathVariable UUID uuid) {
         UUID workflow = workflowService.forceEnding(uuid);
         return ResponseEntity.ok(workflow);
     }
 
     @PostMapping("/job")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateJob(@RequestBody JobResponse<? extends BaseResponseData> rt) {
         BaseResponseData responseData = rt.getData();
         if(responseData instanceof PensumAsyncCreationDto pensumData) {
