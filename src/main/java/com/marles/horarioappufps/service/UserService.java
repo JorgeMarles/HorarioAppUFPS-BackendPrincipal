@@ -69,7 +69,7 @@ public class UserService {
         //Si es el primer usuario, es el super admin
         if (userRepository.count() == 0) {
             addRole(user, "ADMIN");
-            addRole(user, "SUPERUSER");
+            addRole(user, "SUPERADMIN");
         }
 
         return userRepository.save(user);
