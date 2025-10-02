@@ -29,7 +29,7 @@ public class WorkflowController {
         this.workflowService = workflowService;
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<List<WorkflowItemDto>> getAllWorkflows() {
         List<Workflow> list = workflowService.getAll();
         List<WorkflowItemDto> data = WorkflowItemDto.fromList(list);

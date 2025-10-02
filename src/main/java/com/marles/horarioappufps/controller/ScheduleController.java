@@ -51,7 +51,7 @@ public class ScheduleController {
         return ResponseEntity.ok(scheduleService.getByUserUid_Dto(uid));
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ScheduleInfoDto> createSchedule(@RequestBody String title, @AuthenticationPrincipal UserPrincipal userPrincipal) {
         String uid = userPrincipal.getUsername();

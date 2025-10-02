@@ -22,13 +22,13 @@ public class PensumController {
         this.pensumService = pensumService;
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<PensumInfoDto> getPensum(){
         return ResponseEntity.ok(new PensumInfoDto(pensumService.getPensum()));
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PensumInfoDto> savePensum(@RequestBody PensumCreationDto pensumCreationDto){
         Pensum pensum = pensumService.savePensum(pensumCreationDto);
