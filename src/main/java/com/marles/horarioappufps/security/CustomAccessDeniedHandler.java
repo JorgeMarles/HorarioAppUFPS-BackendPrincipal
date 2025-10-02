@@ -1,6 +1,7 @@
 package com.marles.horarioappufps.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marles.horarioappufps.controller.ErrorResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,12 +26,15 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("error", true);
-        body.put("message", "Not enough permission.");
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.FORBIDDEN,
+                "Forbidden",
+                accessDeniedException,
+                request
+        );
 
         ObjectMapper objectMapper = new ObjectMapper();
-        response.getWriter().write(objectMapper.writeValueAsString(body));
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
         response.getWriter().flush();
     }
 }

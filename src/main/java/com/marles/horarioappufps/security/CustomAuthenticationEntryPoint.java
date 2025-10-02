@@ -1,6 +1,7 @@
 package com.marles.horarioappufps.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marles.horarioappufps.controller.ErrorResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,12 +24,15 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("error", true);
-        body.put("message", "Not logged in.");
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.UNAUTHORIZED,
+                "Unauthorized",
+                authException,
+                request
+        );
 
         ObjectMapper objectMapper = new ObjectMapper();
-        response.getWriter().write(objectMapper.writeValueAsString(body));
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
         response.getWriter().flush();
 
     }
