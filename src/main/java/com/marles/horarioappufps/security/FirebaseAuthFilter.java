@@ -37,7 +37,7 @@ public class FirebaseAuthFilter extends OncePerRequestFilter {
 
                 UserPrincipal userPrincipal = new UserPrincipal(user);
 
-                Authentication auth = new UsernamePasswordAuthenticationToken(user, null, userPrincipal.getAuthorities());
+                Authentication auth = new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (FirebaseAuthException e) {
                 log.error("Token validation failed: {}", e.getMessage());

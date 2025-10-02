@@ -22,8 +22,8 @@ public class DataInitializer implements CommandLineRunner {
     private final String[] ROLES = new String[]{"ROLE_SUPERADMIN", "ROLE_ADMIN", "ROLE_USER"};
 
     private void initRoles() {
-        if (roleRepository.count() == 0) {
-            for(String role : ROLES) {
+        for(String role : ROLES) {
+            if(roleRepository.findByName(role).isEmpty()) {
                 Role newRole = new Role();
                 newRole.setName(role);
                 roleRepository.save(newRole);
