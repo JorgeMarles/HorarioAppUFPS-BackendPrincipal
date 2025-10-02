@@ -2,11 +2,13 @@ package com.marles.horarioappufps.dto.request;
 
 import com.marles.horarioappufps.dto.jobs.BaseResponseData;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.*;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 public class PensumAsyncCreationDto extends BaseResponseData {
     private String name;
