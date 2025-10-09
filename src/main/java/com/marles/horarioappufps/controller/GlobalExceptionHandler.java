@@ -21,28 +21,28 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleEntityNotFoundException(EntityNotFoundException ex, HttpServletRequest request) {
-        log.error("Not Found: {}", ex.getMessage(), ex);
+        log.error("Not Found: {}", ex.getMessage());
         return new ErrorResponse(HttpStatus.NOT_FOUND, "Not Found", ex, request);
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleBaseException(Exception ex, HttpServletRequest request) {
-        log.error("Exception: {}", ex.getMessage(), ex);
+        log.error("Exception: {}", ex.getMessage());
         return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", ex, request);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIllegalArgument(IllegalArgumentException ex, HttpServletRequest request) {
-        log.error("Illegal Argument: {}", ex.getMessage(), ex);
+        log.error("Illegal Argument: {}", ex.getMessage());
         return new ErrorResponse(HttpStatus.BAD_REQUEST, "Illegal Argument Exception", ex, request);
     }
 
     @ExceptionHandler(FirebaseAuthException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse handleFirebaseAuthException(FirebaseAuthException ex, HttpServletRequest request) {
-        log.error("FirebaseAuth Exception: {}", ex.getMessage(), ex);
+        log.error("FirebaseAuth Exception: {}", ex.getMessage());
         return new ErrorResponse(HttpStatus.UNAUTHORIZED, "Firebase Auth Exception", ex, request);
     }
 

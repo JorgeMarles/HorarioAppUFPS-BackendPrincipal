@@ -26,7 +26,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.UNAUTHORIZED,
-                "Unauthorized",
+                "No tiene credenciales válidas",
                 authException,
                 request
         );
