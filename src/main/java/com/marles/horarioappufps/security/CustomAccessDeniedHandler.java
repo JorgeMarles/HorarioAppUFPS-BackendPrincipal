@@ -26,7 +26,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.FORBIDDEN,
-                "Forbidden",
+                "No está autorizado para realizar esta solicitud",
                 accessDeniedException,
                 request
         );
