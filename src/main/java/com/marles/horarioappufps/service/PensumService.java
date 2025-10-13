@@ -31,7 +31,15 @@ public class PensumService {
     private final SessionRepository sessionRepository;
 
     public Pensum getPensum(){
-        return getPensum(1L);
+        return getOrCreatePensum(1L);
+    }
+
+    public Pensum getOrCreatePensum(Long id){
+        Pensum pensum = pensumRepository.findById(id).orElse(null);
+        if(pensum == null){
+            pensum = new Pensum();
+        }
+        return pensumRepository.save(pensum);
     }
 
     public Pensum getPensum(Long id) {
