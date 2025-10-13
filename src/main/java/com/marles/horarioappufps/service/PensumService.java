@@ -38,6 +38,7 @@ public class PensumService {
         Pensum pensum = pensumRepository.findById(id).orElse(null);
         if(pensum == null){
             pensum = new Pensum();
+            pensum.setId(id);
         }
         return pensumRepository.save(pensum);
     }
