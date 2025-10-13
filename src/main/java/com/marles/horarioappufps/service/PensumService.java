@@ -43,10 +43,6 @@ public class PensumService {
         return pensumRepository.save(pensum);
     }
 
-    public Pensum getPensum(Long id) {
-        return pensumRepository.findById(id).orElseThrow(() -> new PensumNotFoundException(id));
-    }
-
     @Autowired
     public PensumService(
             PensumRepository pensumRepository,
