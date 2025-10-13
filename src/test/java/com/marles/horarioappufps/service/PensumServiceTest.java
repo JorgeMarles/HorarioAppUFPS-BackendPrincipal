@@ -50,6 +50,7 @@ public class PensumServiceTest {
         Pensum pensum = new Pensum();
         pensum.setId(1L);
         when(pensumRepository.findById(1L)).thenReturn(Optional.of(pensum));
+        when(pensumRepository.save(any(Pensum.class))).thenAnswer(invocation -> invocation.getArgument(0));
         Pensum found = pensumService.getPensum();
         assertEquals(pensum.getId(), found.getId());
     }

@@ -35,12 +35,16 @@ public class PensumService {
         return getOrCreatePensum(1L);
     }
 
+    public Pensum getPensum(Long id){
+        return pensumRepository.findById(id).orElseThrow(() -> new PensumNotFoundException(id));
+    }
+
     public Pensum getOrCreatePensum(Long id){
-        Pensum pensum = pensumRepository.findById(id).orElse(null);
-        if(pensum == null){
-            pensum = new Pensum();
-            pensum.setId(id);
-        }
+        Pensum pensum = pensumRepository.findById(id).orElseGet(() -> {
+            Pensum p = new Pensum();
+            p.setId(id);
+            return p;
+        });
         return pensumRepository.save(pensum);
     }
 
