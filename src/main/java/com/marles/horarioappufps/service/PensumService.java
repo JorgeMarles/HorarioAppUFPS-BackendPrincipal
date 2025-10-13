@@ -31,6 +31,7 @@ public class PensumService {
     private final SessionRepository sessionRepository;
 
     public Pensum getPensum(){
+        //TODO: Mejorar la lógica
         return getOrCreatePensum(1L);
     }
 
