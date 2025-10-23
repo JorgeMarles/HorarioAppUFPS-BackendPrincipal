@@ -4,6 +4,7 @@ import com.marles.horarioappufps.dto.request.PensumCreationDto;
 import com.marles.horarioappufps.dto.request.SessionCreationDto;
 import com.marles.horarioappufps.dto.request.SubjectCreationDto;
 import com.marles.horarioappufps.dto.request.SubjectGroupCreationDto;
+import com.marles.horarioappufps.dto.response.SubjectItemDto;
 import com.marles.horarioappufps.exception.PensumNotFoundException;
 import com.marles.horarioappufps.model.Pensum;
 import com.marles.horarioappufps.model.Session;
@@ -39,7 +40,11 @@ public class PensumService {
     }
 
     public Pensum getOrCreatePensum(Long id){
-        Pensum pensum = pensumRepository.findById(id).orElseGet(Pensum::new);
+        Pensum pensum = pensumRepository.findById(id).orElseGet(() -> {
+            Pensum p = new Pensum();
+            p.setName("Pensum");
+            return p;
+        });
         return pensumRepository.save(pensum);
     }
 
@@ -56,6 +61,7 @@ public class PensumService {
         this.sessionRepository = sessionRepository;
     }
 
+    @Transactional
     public Pensum savePensum(PensumCreationDto pensumCreationDto) {
         Pensum pensum = new Pensum();
         if (pensumCreationDto.getId() != null) {
@@ -106,10 +112,10 @@ public class PensumService {
         }
     }
 
-    private void processRequisite(Subject subject, List<String> requisites, Map<String, Subject> subjectMap) {
+    private void processRequisite(Subject subject, List<SubjectItemDto> requisites, Map<String, Subject> subjectMap) {
         subject.getRequisites().clear();
-        for (String requisite : requisites) {
-            Subject subjectRequisite = subjectMap.get(requisite);
+        for (SubjectItemDto requisite : requisites) {
+            Subject subjectRequisite = subjectMap.get(requisite.getCode());
             if (subjectRequisite != null) {
                 subject.getRequisites().add(subjectRequisite);
             }
@@ -167,7 +173,6 @@ public class PensumService {
 
         updateFields(subjectGroup, subjectGroupCreationDto, updateTeachers);
         subjectGroup.setSubject(subject);
-
         return subjectGroupRepository.save(subjectGroup);
     }
 
@@ -196,6 +201,9 @@ public class PensumService {
         }
         subjectGroup.setAvailableCapacity(subjectGroupCreationDto.getAvailableCapacity());
         subjectGroup.setMaxCapacity(subjectGroupCreationDto.getMaxCapacity());
+        if(subjectGroup.getTeacher() == null) {
+            subjectGroup.setTeacher("-");
+        }
         if(!updateTeachers) {
             return;
         }

@@ -77,7 +77,7 @@ public class PensumServiceTest {
         subjectDto.setRequisites(List.of());
 
         SubjectGroupCreationDto groupDto = new SubjectGroupCreationDto();
-        groupDto.setName("1155555-A");
+        groupDto.setCode("1155555-A");
         groupDto.setTeacher("Teacher A");
         groupDto.setProgram("ING");
         groupDto.setMaxCapacity(30);
@@ -136,7 +136,7 @@ public class PensumServiceTest {
     @Test
     public void testUpdateFields_SubjectGroup_Case1(){
         SubjectGroupCreationDto sgdto = new SubjectGroupCreationDto();
-        sgdto.setName("1155555-A");
+        sgdto.setCode("1155555-A");
         sgdto.setProgram("115");
         sgdto.setMaxCapacity(30);
         sgdto.setAvailableCapacity(20);
@@ -162,7 +162,7 @@ public class PensumServiceTest {
     @Test
     public void testUpdateFields_SubjectGroup_Case2(){
         SubjectGroupCreationDto sgdto = new SubjectGroupCreationDto();
-        sgdto.setName("1155555-A");
+        sgdto.setCode("1155555-A");
         sgdto.setProgram("115");
         sgdto.setMaxCapacity(30);
         sgdto.setAvailableCapacity(20);
@@ -188,7 +188,7 @@ public class PensumServiceTest {
     @Test
     public void testUpdateFields_SubjectGroup_Case3(){
         SubjectGroupCreationDto sgdto = new SubjectGroupCreationDto();
-        sgdto.setName("1155555-A");
+        sgdto.setCode("1155555-A");
         sgdto.setProgram("115");
         sgdto.setMaxCapacity(30);
         sgdto.setAvailableCapacity(20);
@@ -214,7 +214,7 @@ public class PensumServiceTest {
     @Test
     public void testUpdateFields_SubjectGroup_Case4(){
         SubjectGroupCreationDto sgdto = new SubjectGroupCreationDto();
-        sgdto.setName("1155555-A");
+        sgdto.setCode("1155555-A");
         sgdto.setProgram("115");
         sgdto.setMaxCapacity(30);
         sgdto.setAvailableCapacity(20);
