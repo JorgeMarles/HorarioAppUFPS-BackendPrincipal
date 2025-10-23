@@ -25,7 +25,11 @@ public class PensumController {
     @GetMapping("")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<PensumInfoDto> getPensum(){
-        return ResponseEntity.ok(new PensumInfoDto(pensumService.getPensum()));
+        Pensum pensum = pensumService.getPensum();
+        PensumInfoDto pensumInfoDto = new PensumInfoDto(pensum);
+        //pensumInfoDto.filterInvalidSubjects();
+        pensumInfoDto.sortByDepth();
+        return ResponseEntity.ok(pensumInfoDto);
     }
 
     @PostMapping("")

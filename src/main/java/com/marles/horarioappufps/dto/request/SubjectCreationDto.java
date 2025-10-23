@@ -1,5 +1,6 @@
 package com.marles.horarioappufps.dto.request;
 
+import com.marles.horarioappufps.dto.response.SubjectItemDto;
 import com.marles.horarioappufps.model.SubjectType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,5 +18,5 @@ public class SubjectCreationDto {
     private int requiredCredits = 0;
     private SubjectType type;
     private List<SubjectGroupCreationDto> groups;
-    private List<String> requisites;
+    private List<SubjectItemDto> requisites;
 }
