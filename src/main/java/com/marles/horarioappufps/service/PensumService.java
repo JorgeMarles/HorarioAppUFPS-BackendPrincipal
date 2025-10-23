@@ -31,7 +31,6 @@ public class PensumService {
     private final SessionRepository sessionRepository;
 
     public Pensum getPensum(){
-        //TODO: Mejorar la lógica
         return getOrCreatePensum(1L);
     }
 
@@ -40,11 +39,7 @@ public class PensumService {
     }
 
     public Pensum getOrCreatePensum(Long id){
-        Pensum pensum = pensumRepository.findById(id).orElseGet(() -> {
-            Pensum p = new Pensum();
-            p.setId(id);
-            return p;
-        });
+        Pensum pensum = pensumRepository.findById(id).orElseGet(Pensum::new);
         return pensumRepository.save(pensum);
     }
 
@@ -82,13 +77,24 @@ public class PensumService {
         Map<String, Subject> subjectMap = new HashMap<>();
 
         for (SubjectCreationDto subjectCreationDto : subjectCreationDtos) {
+            if(subjectMap.containsKey(subjectCreationDto.getCode())){
+                throw new IllegalArgumentException("Código "+subjectCreationDto.getCode()+" duplicado al crear materia");
+            }
             Subject subject = createOrUpdateSubject(subjectCreationDto, pensum);
             subjectMap.put(subject.getCode(), subject);
             pensum.getSubjects().add(subject);
         }
 
+        Set<String> groupSet = new HashSet<>();
+
         for (int i = 0; i < subjectCreationDtos.size(); i++) {
             SubjectCreationDto subjectCreationDto = subjectCreationDtos.get(i);
+            for(SubjectGroupCreationDto group : subjectCreationDto.getGroups()){
+                if(groupSet.contains(group.getCode())){
+                    throw new IllegalArgumentException("Código "+group.getCode()+" duplicado al crear grupo");
+                }
+                groupSet.add(group.getCode());
+            }
             Subject subject = pensum.getSubjects().get(i);
             processGroups(subject, subjectCreationDto.getGroups(), updateTeachers);
         }
@@ -154,7 +160,7 @@ public class PensumService {
 
     public SubjectGroup createOrUpdateSubjectGroup(SubjectGroupCreationDto subjectGroupCreationDto, Subject subject, boolean updateTeachers) {
         SubjectGroup subjectGroup = new SubjectGroup();
-        Optional<SubjectGroup> subjectGroupOpt = subjectGroupRepository.findByCode(subjectGroupCreationDto.getName());
+        Optional<SubjectGroup> subjectGroupOpt = subjectGroupRepository.findByCode(subjectGroupCreationDto.getCode());
         if (subjectGroupOpt.isPresent()) {
             subjectGroup = subjectGroupOpt.get();
         }
@@ -182,11 +188,11 @@ public class PensumService {
     }
 
     private void updateFields(SubjectGroup subjectGroup, SubjectGroupCreationDto subjectGroupCreationDto, boolean updateTeachers) {
-        subjectGroup.setCode(subjectGroupCreationDto.getName());
+        subjectGroup.setCode(subjectGroupCreationDto.getCode());
         if(subjectGroupCreationDto.getProgram() != null) {
             subjectGroup.setProgram(subjectGroupCreationDto.getProgram());
         } else {
-            subjectGroup.setProgram(subjectGroupCreationDto.getName().substring(0,3));
+            subjectGroup.setProgram(subjectGroupCreationDto.getCode().substring(0,3));
         }
         subjectGroup.setAvailableCapacity(subjectGroupCreationDto.getAvailableCapacity());
         subjectGroup.setMaxCapacity(subjectGroupCreationDto.getMaxCapacity());
