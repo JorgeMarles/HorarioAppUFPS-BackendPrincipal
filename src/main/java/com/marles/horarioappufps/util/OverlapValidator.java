@@ -42,6 +42,10 @@ public class OverlapValidator {
     public void add(Session session, int value) {
         int i = getBeginIndex(session);
         int j = getEndIndex(session);
+        SubjectGroup overlapped = this.overlaps(session);
+        if (overlapped != null) {
+            throw new ScheduleConflictException(overlapped.getCode(), overlapped.getCode());
+        }
         this.segmentTree.update(i, j, value);
     }
 
