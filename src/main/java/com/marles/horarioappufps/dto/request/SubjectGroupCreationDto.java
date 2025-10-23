@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class SubjectGroupCreationDto {
-    private String name;
+    private String code;
     private String teacher;
     private String program;
     private int maxCapacity;
