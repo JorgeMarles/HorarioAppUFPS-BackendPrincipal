@@ -3,6 +3,7 @@ package com.marles.horarioappufps.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Data
@@ -43,5 +44,6 @@ public class Session {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_group_id", nullable = false)
+    @ToString.Exclude
     private SubjectGroup group;
 }
