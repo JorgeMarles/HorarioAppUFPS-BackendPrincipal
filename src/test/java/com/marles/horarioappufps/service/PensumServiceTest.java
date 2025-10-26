@@ -1,10 +1,13 @@
 package com.marles.horarioappufps.service;
 
 import com.marles.horarioappufps.dto.request.PensumCreationDto;
+import com.marles.horarioappufps.dto.request.SessionCreationDto;
 import com.marles.horarioappufps.dto.request.SubjectCreationDto;
 import com.marles.horarioappufps.dto.request.SubjectGroupCreationDto;
+import com.marles.horarioappufps.dto.response.SubjectItemDto;
 import com.marles.horarioappufps.exception.PensumNotFoundException;
 import com.marles.horarioappufps.model.Pensum;
+import com.marles.horarioappufps.model.Session;
 import com.marles.horarioappufps.model.Subject;
 import com.marles.horarioappufps.model.SubjectGroup;
 import com.marles.horarioappufps.repository.PensumRepository;
@@ -111,7 +114,7 @@ public class PensumServiceTest {
         assertEquals("Pensum", result.getName());
         assertEquals(10, result.getSemesters());
 
-        verify(pensumRepository, times(1)).save(any(Pensum.class));
+        verify(pensumRepository, times(2)).save(any(Pensum.class));
         verify(subjectRepository, times(1)).findByCode("1155555");
         verify(subjectRepository, times(2)).save(any(Subject.class));
         verify(subjectGroupRepository, times(1)).findByCode("1155555-A");
@@ -235,5 +238,174 @@ public class PensumServiceTest {
 
         assertEquals("B", result.getTeacher());
         assertTrue(result.isCurrentTeacher());
+    }
+
+    @Test
+    public void testSubject_DuplicateCode() {
+        PensumCreationDto pensumDto = new PensumCreationDto();
+        pensumDto.setName("Pensum");
+        pensumDto.setSemesters(10);
+        pensumDto.setUpdateTeachers(false);
+
+        SubjectCreationDto s1 = new SubjectCreationDto();
+        s1.setCode("1155104");
+        s1.setName("Fundamentos de Programacion");
+        s1.setCredits(4);
+        s1.setHours(4);
+        s1.setSemester(1);
+        s1.setRequisites(List.of());
+        s1.setGroups(List.of());
+
+        SubjectCreationDto s2 = new SubjectCreationDto();
+        s2.setCode("1155104");
+        s2.setName("Programacion Orientada a Objetos I");
+        s2.setCredits(4);
+        s2.setHours(4);
+        s2.setSemester(2);
+        s2.setRequisites(List.of());
+        s2.setGroups(List.of());
+
+        pensumDto.setSubjects(List.of(s1, s2));
+
+        Pensum existingPensum = new Pensum();
+        existingPensum.setId(1L);
+
+        Subject sub1 = new Subject();
+        sub1.setCode("1155104");
+        sub1.setName("Fundamentos de Programacion");
+
+        when(pensumRepository.findById(1L)).thenReturn(Optional.of(existingPensum));
+        when(pensumRepository.save(any(Pensum.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(subjectRepository.save(any(Subject.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        assertThrows(IllegalArgumentException.class, () -> pensumService.savePensum(pensumDto));
+    }
+
+    @Test
+    public void testSubjectGroup_DuplicateCode() {
+        PensumCreationDto pensumDto = new PensumCreationDto();
+        pensumDto.setName("Pensum");
+        pensumDto.setSemesters(10);
+        pensumDto.setUpdateTeachers(false);
+
+        SubjectCreationDto s1 = new SubjectCreationDto();
+        s1.setCode("1155104");
+        s1.setName("Fundamentos de Programacion");
+        s1.setRequisites(List.of());
+
+        SubjectGroupCreationDto sg1 = new SubjectGroupCreationDto();
+        sg1.setCode("1155104-A");
+        sg1.setSessions(List.of());
+
+        SubjectCreationDto s2 = new SubjectCreationDto();
+        s2.setCode("1155204");
+        s2.setName("POO II");
+        s2.setRequisites(List.of());
+
+        SubjectGroupCreationDto sg2 = new SubjectGroupCreationDto();
+        sg2.setCode("1155104-A");
+        sg2.setSessions(List.of());
+
+        s1.setGroups(List.of(sg1));
+        s2.setGroups(List.of(sg2));
+
+        pensumDto.setSubjects(List.of(s1, s2));
+
+        when(pensumRepository.save(any(Pensum.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(subjectRepository.save(any(Subject.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(subjectGroupRepository.save(any(SubjectGroup.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        assertThrows(IllegalArgumentException.class, () -> pensumService.savePensum(pensumDto));
+    }
+
+    @Test
+    public void testCircularRequisite() {
+        PensumCreationDto pensumDto = new PensumCreationDto();
+        pensumDto.setName("Pensum");
+        pensumDto.setSemesters(10);
+        pensumDto.setUpdateTeachers(false);
+
+        SubjectCreationDto s1 = new SubjectCreationDto();
+        s1.setCode("1155104");
+        s1.setName("Fundamentos de Programacion");
+        s1.setCredits(4);
+        s1.setHours(4);
+        s1.setSemester(1);
+        s1.setGroups(List.of());
+
+        SubjectCreationDto s2 = new SubjectCreationDto();
+        s2.setCode("1155204");
+        s2.setName("Programacion Orientada a Objetos I");
+        s2.setCredits(4);
+        s2.setHours(4);
+        s2.setSemester(2);
+        s2.setGroups(List.of());
+
+        SubjectItemDto si1 = new SubjectItemDto();
+        si1.setCode("1155104");
+
+        SubjectItemDto si2 = new SubjectItemDto();
+        si2.setCode("1155204");
+
+        s1.setRequisites(List.of(si2));
+        s2.setRequisites(List.of(si1));
+
+        pensumDto.setSubjects(List.of(s1, s2));
+
+        when(pensumRepository.save(any(Pensum.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(subjectRepository.save(any(Subject.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        assertThrows(IllegalArgumentException.class, () -> pensumService.savePensum(pensumDto));
+
+        s1.setRequisites(List.of());
+        s2.setRequisites(List.of(si1));
+
+        assertDoesNotThrow(() -> pensumService.savePensum(pensumDto));
+    }
+
+    @Test
+    public void test_SubjectGroupCollision() {
+        PensumCreationDto pensumDto = new PensumCreationDto();
+        pensumDto.setName("Pensum");
+        pensumDto.setSemesters(10);
+        pensumDto.setUpdateTeachers(false);
+
+        SubjectCreationDto s1 = new SubjectCreationDto();
+        s1.setCode("1155104");
+        s1.setName("Fundamentos de Programacion");
+        s1.setCredits(4);
+        s1.setHours(4);
+        s1.setSemester(1);
+        s1.setRequisites(List.of());
+
+        SubjectGroupCreationDto sg1 = new SubjectGroupCreationDto();
+        sg1.setCode("1155104-A");
+
+        SessionCreationDto ss1 = new SessionCreationDto();
+        ss1.setDay(0);
+        ss1.setBeginHour(0);
+        ss1.setEndHour(2);
+
+        SessionCreationDto ss2 = new SessionCreationDto();
+        ss2.setDay(0);
+        ss2.setBeginHour(1);
+        ss2.setEndHour(3);
+
+        sg1.setSessions(List.of(ss1, ss2));
+
+        s1.setGroups(List.of(sg1));
+
+        pensumDto.setSubjects(List.of(s1));
+
+        when(pensumRepository.save(any(Pensum.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(subjectRepository.save(any(Subject.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(subjectGroupRepository.save(any(SubjectGroup.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(sessionRepository.save(any(Session.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        assertThrows(IllegalArgumentException.class, () -> pensumService.savePensum(pensumDto));
+
+        ss2.setBeginHour(2);
+
+        assertDoesNotThrow(() -> pensumService.savePensum(pensumDto));
     }
 }

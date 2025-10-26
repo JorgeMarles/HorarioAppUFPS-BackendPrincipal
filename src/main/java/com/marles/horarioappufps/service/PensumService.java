@@ -164,13 +164,13 @@ public class PensumService {
             SubjectGroup subjectGroup = createOrUpdateSubjectGroup(subjectGroupCreationDto, subject, updateTeachers);
             subject.getGroups().add(subjectGroup);
 
+            processSessions(subjectGroup, subjectGroupCreationDto.getSessions());
+
             try {
                 validateOverlappingForSubjectGroup(subjectGroup);
             }catch(ScheduleConflictException ex){
                 throw new IllegalArgumentException("Solapamiento en materia: "+ex.getMessage());
             }
-
-            processSessions(subjectGroup, subjectGroupCreationDto.getSessions());
         }
     }
 
