@@ -33,10 +33,11 @@ public class OverlapValidator {
         if (overlapped != null) {
             throw new ScheduleConflictException(subjectGroup.getCode(), overlapped.getCode());
         }
-        for (Session session : subjectGroup.getSessions()) {
-            this.add(session, this.subjectGroups.size());
-        }
+        int idx = this.subjectGroups.size();
         this.subjectGroups.add(subjectGroup);
+        for (Session session : subjectGroup.getSessions()) {
+            this.add(session, idx);
+        }
     }
 
     public void add(Session session, int value) {
