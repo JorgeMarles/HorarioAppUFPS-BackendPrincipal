@@ -80,9 +80,8 @@ public class PensumService {
     }
 
     private void processSubjects(Pensum pensum, List<SubjectCreationDto> subjectCreationDtos, boolean updateTeachers) {
-        pensum.getSubjects().clear();
-
         Map<String, Subject> subjectMap = new HashMap<>();
+        List<Subject> newSubjects = new ArrayList<>();
 
         for (SubjectCreationDto subjectCreationDto : subjectCreationDtos) {
             if (subjectMap.containsKey(subjectCreationDto.getCode())) {
@@ -90,7 +89,7 @@ public class PensumService {
             }
             Subject subject = createOrUpdateSubject(subjectCreationDto, pensum);
             subjectMap.put(subject.getCode(), subject);
-            pensum.getSubjects().add(subject);
+            newSubjects.add(subject);
         }
 
         for (SubjectCreationDto subjectCreationDto : subjectCreationDtos) {
@@ -106,26 +105,26 @@ public class PensumService {
         }
 
         Set<String> groupSet = new HashSet<>();
-
         for (int i = 0; i < subjectCreationDtos.size(); i++) {
             SubjectCreationDto subjectCreationDto = subjectCreationDtos.get(i);
-
             for (SubjectGroupCreationDto group : subjectCreationDto.getGroups()) {
                 if (groupSet.contains(group.getCode())) {
                     throw new IllegalArgumentException("Código " + group.getCode() + " duplicado al crear grupo");
                 }
                 groupSet.add(group.getCode());
             }
-            Subject subject = pensum.getSubjects().get(i);
+            Subject subject = newSubjects.get(i);
             processGroups(subject, subjectCreationDto.getGroups(), updateTeachers);
-
         }
 
         for (int i = 0; i < subjectCreationDtos.size(); i++) {
             SubjectCreationDto subjectCreationDto = subjectCreationDtos.get(i);
-            Subject subject = pensum.getSubjects().get(i);
+            Subject subject = newSubjects.get(i);
             processRequisite(subject, subjectCreationDto.getRequisites(), subjectMap);
         }
+
+        pensum.getSubjects().clear();
+        pensum.getSubjects().addAll(newSubjects);
     }
 
     private void validateOverlappingForSubjectGroup(SubjectGroup group){
@@ -158,7 +157,7 @@ public class PensumService {
     }
 
     private void processGroups(Subject subject, List<SubjectGroupCreationDto> subjectGroupCreationDtos, boolean updateTeachers) {
-        subject.getGroups().clear();
+        List<SubjectGroup> newSubjectGroups = new ArrayList<>();
 
         for (SubjectGroupCreationDto subjectGroupCreationDto : subjectGroupCreationDtos) {
             SubjectGroup subjectGroup = createOrUpdateSubjectGroup(subjectGroupCreationDto, subject, updateTeachers);
@@ -171,7 +170,12 @@ public class PensumService {
             }catch(ScheduleConflictException ex){
                 throw new IllegalArgumentException("Solapamiento en materia: "+ex.getMessage());
             }
+
+            newSubjectGroups.add(subjectGroup);
         }
+
+        subject.getGroups().clear();
+        subject.getGroups().addAll(newSubjectGroups);
     }
 
     private void processSessions(SubjectGroup subjectGroup, List<SessionCreationDto> sessionCreationDtos) {
