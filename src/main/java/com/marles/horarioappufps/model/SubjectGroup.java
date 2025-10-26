@@ -3,6 +3,7 @@ package com.marles.horarioappufps.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +36,7 @@ public class SubjectGroup {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id", nullable = false)
+    @ToString.Exclude
     private Subject subject;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

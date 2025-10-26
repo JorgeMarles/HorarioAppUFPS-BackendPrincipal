@@ -3,6 +3,7 @@ package com.marles.horarioappufps.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -39,6 +40,7 @@ public class Subject {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pensum_id", nullable = false)
+    @ToString.Exclude
     private Pensum pensum;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -47,6 +49,7 @@ public class Subject {
             joinColumns = @JoinColumn(name = "subject_id"),
             inverseJoinColumns = @JoinColumn(name = "requisite_id")
     )
+    @ToString.Exclude
     private List<Subject> requisites = new LinkedList<>();
 
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

@@ -195,6 +195,27 @@ public class OverlapValidatorTest {
     }
 
     @Test
+    public void testOverlap_self(){
+        SubjectGroup sg1 = new SubjectGroup();
+        sg1.setCode("1155555-A");
+
+        Session s11 = new Session();
+        s11.setDay(0);
+        s11.setBeginHour(0);
+        s11.setEndHour(2);
+
+        Session s12 = new Session();
+        s12.setDay(0);
+        s12.setBeginHour(1);
+        s12.setEndHour(3);
+        sg1.setSessions(List.of(s11,s12));
+
+        OverlapValidator ov = new OverlapValidator();
+
+        assertThrows(ScheduleConflictException.class, ()-> ov.add(sg1));
+    }
+
+    @Test
     public void testOverlap_overlaps_false(){
         SubjectGroup sg1 = new SubjectGroup();
         sg1.setCode("1155555-A");
