@@ -35,6 +35,7 @@ public class PensumController {
     @PostMapping("")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PensumInfoDto> savePensum(@RequestBody PensumCreationDto pensumCreationDto){
+        log.info("Saving pensum: {} subjects",  pensumCreationDto.getSubjects().size());
         Pensum pensum = pensumService.savePensum(pensumCreationDto);
         return ResponseEntity.ok(new PensumInfoDto(pensum));
     }
