@@ -225,11 +225,7 @@ public class PensumService {
 
     private void updateFields(SubjectGroup subjectGroup, SubjectGroupCreationDto subjectGroupCreationDto, boolean updateTeachers) {
         subjectGroup.setCode(subjectGroupCreationDto.getCode());
-        if (subjectGroupCreationDto.getProgram() != null) {
-            subjectGroup.setProgram(subjectGroupCreationDto.getProgram());
-        } else {
-            subjectGroup.setProgram(subjectGroupCreationDto.getCode().substring(0, 3));
-        }
+        subjectGroup.setProgram(subjectGroupCreationDto.getCode().substring(0, 3));
         subjectGroup.setAvailableCapacity(subjectGroupCreationDto.getAvailableCapacity());
         subjectGroup.setMaxCapacity(subjectGroupCreationDto.getMaxCapacity());
         if (subjectGroup.getTeacher() == null) {
