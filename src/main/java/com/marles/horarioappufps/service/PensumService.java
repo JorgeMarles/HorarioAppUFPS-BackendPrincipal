@@ -109,7 +109,7 @@ public class PensumService {
             SubjectCreationDto subjectCreationDto = subjectCreationDtos.get(i);
             for (SubjectGroupCreationDto group : subjectCreationDto.getGroups()) {
                 if (groupSet.contains(group.getCode())) {
-                    throw new IllegalArgumentException("Código " + group.getCode() + " duplicado al crear grupo");
+                    throw new IllegalArgumentException("Código " + group.getCode() + " duplicado al crear grupo, materia "+subjectCreationDto.getCode());
                 }
                 groupSet.add(group.getCode());
             }
