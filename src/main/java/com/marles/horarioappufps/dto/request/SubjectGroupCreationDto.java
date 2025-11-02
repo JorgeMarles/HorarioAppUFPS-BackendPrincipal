@@ -10,7 +10,6 @@ import java.util.List;
 public class SubjectGroupCreationDto {
     private String code;
     private String teacher;
-    private String program;
     private int maxCapacity;
     private int availableCapacity;
     private List<SessionCreationDto> sessions;
