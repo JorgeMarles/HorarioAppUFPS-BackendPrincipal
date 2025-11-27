@@ -1,6 +1,8 @@
 package com.marles.horarioappufps.controller;
 
-import com.marles.horarioappufps.dto.response.ScheduleInfoDto;
+import com.marles.horarioappufps.dto.request.ScheduleCreationDto;
+import com.marles.horarioappufps.dto.request.ScheduleGroupChangeDto;
+import com.marles.horarioappufps.dto.response.schedule.ScheduleInfoDto;
 import com.marles.horarioappufps.model.Schedule;
 import com.marles.horarioappufps.security.UserPrincipal;
 import com.marles.horarioappufps.service.ScheduleService;
@@ -53,9 +55,9 @@ public class ScheduleController {
 
     @PostMapping("")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<ScheduleInfoDto> createSchedule(@RequestBody String title, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+    public ResponseEntity<ScheduleInfoDto> createSchedule(@RequestBody ScheduleCreationDto dto, @AuthenticationPrincipal UserPrincipal userPrincipal) {
         String uid = userPrincipal.getUsername();
-        Schedule resp = scheduleService.createSchedule(title, uid);
+        Schedule resp = scheduleService.createSchedule(dto.getTitle(), uid);
         return ResponseEntity.ok(scheduleService.getFromSchedule(resp));
     }
 
@@ -85,9 +87,9 @@ public class ScheduleController {
 
     @PutMapping("/{scheduleId}/group/{oldCode}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<ScheduleInfoDto> changeGroup(@PathVariable Long scheduleId, @PathVariable String oldCode, @RequestBody String newCode, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+    public ResponseEntity<ScheduleInfoDto> changeGroup(@PathVariable Long scheduleId, @PathVariable String oldCode, @RequestBody ScheduleGroupChangeDto newCodeDto, @AuthenticationPrincipal UserPrincipal userPrincipal) {
         validatePermissions(scheduleId, userPrincipal);
-        Schedule schedule = scheduleService.changeGroup(scheduleId, oldCode, newCode);
+        Schedule schedule = scheduleService.changeGroup(scheduleId, oldCode, newCodeDto.getNewCode());
         return ResponseEntity.ok(scheduleService.getFromSchedule(schedule));
     }
 

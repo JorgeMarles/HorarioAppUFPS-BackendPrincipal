@@ -1,5 +1,6 @@
-package com.marles.horarioappufps.dto.response;
+package com.marles.horarioappufps.dto.response.schedule;
 
+import com.marles.horarioappufps.dto.response.SessionInfoDto;
 import com.marles.horarioappufps.model.Session;
 import com.marles.horarioappufps.model.SubjectGroup;
 import lombok.Data;
@@ -10,7 +11,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class GroupScheduleDto {
+public class ScheduleGroupDto {
     private Long id;
     private String name;
     private String teacher;
@@ -19,7 +20,7 @@ public class GroupScheduleDto {
     private int credits;
     private List<SessionInfoDto> sessions = new LinkedList<>();
 
-    public GroupScheduleDto(SubjectGroup subjectGroup) {
+    public ScheduleGroupDto(SubjectGroup subjectGroup) {
         this.id = subjectGroup.getId();
         this.code = subjectGroup.getCode();
         this.name = subjectGroup.getSubject().getName();

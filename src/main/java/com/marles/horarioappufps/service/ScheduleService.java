@@ -1,6 +1,9 @@
 package com.marles.horarioappufps.service;
 
-import com.marles.horarioappufps.dto.response.ScheduleInfoDto;
+import com.marles.horarioappufps.dto.response.schedule.MessageType;
+import com.marles.horarioappufps.dto.response.schedule.ScheduleGroupDto;
+import com.marles.horarioappufps.dto.response.schedule.ScheduleGroupWrapper;
+import com.marles.horarioappufps.dto.response.schedule.ScheduleInfoDto;
 import com.marles.horarioappufps.exception.*;
 import com.marles.horarioappufps.model.Schedule;
 import com.marles.horarioappufps.model.Subject;
@@ -48,7 +51,27 @@ public class ScheduleService {
     }
 
     public ScheduleInfoDto getFromSchedule(Schedule schedule) {
-        return new ScheduleInfoDto(schedule, getGroupsOfSchedule(schedule));
+        OverlapValidator overlapValidator = new OverlapValidator();
+        List<ScheduleGroupWrapper> wrappers = schedule.getCodes().stream().map(code -> {
+            try {
+                SubjectGroup group = subjectGroupRepository.findByCode(code).orElseThrow(() -> new GroupNotFoundException(code));
+                ScheduleGroupWrapper sgw = new ScheduleGroupWrapper(new ScheduleGroupDto(group));
+                try {
+                    overlapValidator.add(group);
+                }catch (ScheduleConflictException e){
+                    for(String err : e.getMessages()){
+                        sgw.add(err, MessageType.ERROR);
+                    }
+                }
+                return sgw;
+            } catch (GroupNotFoundException e) {
+                ScheduleGroupWrapper sgw = new ScheduleGroupWrapper(code);
+                sgw.add("Grupo no encontrado o eliminado", MessageType.ERROR);
+                return sgw;
+            }
+        }).toList();
+
+        return new ScheduleInfoDto(schedule, wrappers);
     }
 
     public List<ScheduleInfoDto> getByUserUid_Dto(String uid){
@@ -70,16 +93,6 @@ public class ScheduleService {
     public ScheduleInfoDto getById_Dto(Long id) {
         Schedule schedule = getById(id);
         return getFromSchedule(schedule);
-    }
-
-    public List<SubjectGroup> getGroupsOfSchedule(Schedule schedule){
-        List<SubjectGroup> subjectGroups = new LinkedList<>();
-
-        for(String code : schedule.getCodes()) {
-            SubjectGroup group = subjectGroupRepository.findByCode(code).orElseThrow(() -> new GroupNotFoundException(code));
-            subjectGroups.add(group);
-        }
-        return subjectGroups;
     }
 
     public Schedule createSchedule(String uid, String title) {
