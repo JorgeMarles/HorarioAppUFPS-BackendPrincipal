@@ -1,11 +1,11 @@
 package com.marles.horarioappufps.util;
 
 import com.marles.horarioappufps.exception.RequisiteConflictException;
+import com.marles.horarioappufps.exception.SubjectNotFoundException;
 import com.marles.horarioappufps.model.Pensum;
 import com.marles.horarioappufps.model.Subject;
-import com.marles.horarioappufps.service.PensumService;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,38 +14,56 @@ import java.util.Set;
 
 @Data
 public class RequisiteValidator {
-    private Pensum pensum;
+    private Map<String, Subject> pensum;
     private Map<String, String> visited = new HashMap<>();
     private Set<String> subjects = new HashSet<>();
 
-    public RequisiteValidator(@Autowired PensumService pensumService) {
-        this.pensum = pensumService.getPensum();
+    public RequisiteValidator(Pensum pensum) {
+        this.pensum = new HashMap<>();
+        for (Subject subject : pensum.getSubjects()) {
+            this.pensum.put(subject.getCode(), subject);
+        }
     }
 
-    private void markAsVisited(Subject subject, Subject origin) throws RequisiteConflictException {
+    /**
+     * Mark a Node as visited
+     *
+     * @param subject the subject marking as visited
+     * @param origin the origin of this DFS
+     * @return true when this was the first visit of the node
+     * @throws RequisiteConflictException when the subject is par of the registered subjects
+     */
+    private boolean markAsVisited(Subject subject, Subject origin) throws RequisiteConflictException {
         if (subjects.contains(subject.getCode())) {
             throw new RequisiteConflictException("La materia " + subject.getCode() + " es prerrequisito de " + origin.getCode());
         }
+        boolean firstTime = !visited.containsKey(subject.getCode());
         visited.put(subject.getCode(), origin.getCode());
+        return firstTime;
     }
 
     private void addRecursively(Subject subject, Subject origin) throws RequisiteConflictException {
-        markAsVisited(subject, origin);
+        boolean firstTime = markAsVisited(subject, origin);
+        if (!firstTime) {
+            return;
+        }
         for (Subject requisite : subject.getRequisites()) {
-            if (!visited.containsKey(requisite.getCode())) {
-                addRecursively(requisite, origin);
-            }
+            addRecursively(requisite, origin);
         }
     }
 
-    public void add(Subject subject) throws RequisiteConflictException {
-        if (subjects.contains(subject.getCode())) {
-            throw new RequisiteConflictException("La materia de codigo " + subject.getCode() + " ya está en este horario");
+    public void add(String code) throws RequisiteConflictException {
+        if (subjects.contains(code)) {
+            throw new RequisiteConflictException("La materia de codigo " + code + " ya está en este horario");
         }
-        if (visited.containsKey(subject.getCode())) {
-            throw new RequisiteConflictException("La materia con codigo " + subject.getCode() + " es prerrequisito de " + visited.get(subject.getCode()));
+        if (visited.containsKey(code)) {
+            throw new RequisiteConflictException("La materia con codigo " + code + " es prerrequisito de " + visited.get(code));
+        }
+        Subject subject = this.pensum.get(code);
+        if (subject == null) {
+            throw new SubjectNotFoundException(code);
         }
         addRecursively(subject, subject);
-        subjects.add(subject.getCode());
+        subjects.add(code);
     }
 }
