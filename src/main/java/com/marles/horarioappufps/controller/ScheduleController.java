@@ -53,11 +53,19 @@ public class ScheduleController {
         return ResponseEntity.ok(scheduleService.getByUserUid_Dto(uid));
     }
 
+    @PostMapping("/duplicate/{scheduleId}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<ScheduleInfoDto> duplicateSchedule(@PathVariable Long scheduleId, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        validatePermissions(scheduleId, userPrincipal);
+        Schedule cpy = scheduleService.duplicateSchedule(scheduleId, userPrincipal.getUsername());
+        return ResponseEntity.ok(scheduleService.getFromSchedule(cpy));
+    }
+
     @PostMapping("")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ScheduleInfoDto> createSchedule(@RequestBody ScheduleCreationDto dto, @AuthenticationPrincipal UserPrincipal userPrincipal) {
         String uid = userPrincipal.getUsername();
-        Schedule resp = scheduleService.createSchedule(uid, dto.getTitle());
+        Schedule resp = scheduleService.createSchedule(dto.getTitle(), uid);
         return ResponseEntity.ok(scheduleService.getFromSchedule(resp));
     }
 

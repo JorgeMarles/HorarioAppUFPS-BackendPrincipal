@@ -1,6 +1,7 @@
 package com.marles.horarioappufps.controller;
 
 import com.google.firebase.auth.FirebaseAuthException;
+import com.marles.horarioappufps.exception.ScheduleConflictException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
@@ -23,6 +24,13 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleEntityNotFoundException(EntityNotFoundException ex, HttpServletRequest request) {
         log.error("Not Found: {}", ex.getMessage());
         return new ErrorResponse(HttpStatus.NOT_FOUND, "Not Found", ex, request);
+    }
+
+    @ExceptionHandler(ScheduleConflictException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleScheduleConflictException(ScheduleConflictException ex, HttpServletRequest request) {
+        log.error("Schedule Conflict: {}", ex.getMessage());
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, "Schedule Conflict", ex, request);
     }
 
     @ExceptionHandler(Exception.class)

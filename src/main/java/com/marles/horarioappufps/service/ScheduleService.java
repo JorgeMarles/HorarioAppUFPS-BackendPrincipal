@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -95,7 +96,7 @@ public class ScheduleService {
         return getFromSchedule(schedule);
     }
 
-    public Schedule createSchedule(String uid, String title) {
+    public Schedule createSchedule(String title, String uid) {
         Schedule schedule = new Schedule();
         User user = userRepository.findById(uid).orElseThrow(() -> new UserNotFoundException(uid));
         schedule.setUser(user);
@@ -103,6 +104,18 @@ public class ScheduleService {
         schedule.setTitle(title);
 
         return scheduleRepository.save(schedule);
+    }
+
+    public Schedule duplicateSchedule(Long id, String uid){
+        Schedule schedule = getById(id);
+        User user = userRepository.findById(uid).orElseThrow(() -> new UserNotFoundException(uid));
+        Schedule copy =  new Schedule();
+        copy.setUser(user);
+        copy.setTitle(schedule.getTitle());
+        copy.setPensum(schedule.getPensum());
+        copy.setCodes(schedule.getCodes().stream().map(e -> e).collect(Collectors.toSet()));
+
+        return scheduleRepository.save(copy);
     }
 
     public void validateSubjectDuplicate(List<SubjectGroup> groups, Subject subject) {
