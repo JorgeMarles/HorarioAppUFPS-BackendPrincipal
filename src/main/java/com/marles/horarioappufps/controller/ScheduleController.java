@@ -85,6 +85,14 @@ public class ScheduleController {
         return ResponseEntity.ok(scheduleService.getFromSchedule(schedule));
     }
 
+    @PutMapping("/{scheduleId}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<ScheduleInfoDto> updateTitle(@PathVariable Long scheduleId, @RequestBody ScheduleCreationDto dto, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        validatePermissions(scheduleId, userPrincipal);
+        Schedule schedule = scheduleService.updateTitle(scheduleId, dto.getTitle());
+        return ResponseEntity.ok(scheduleService.getFromSchedule(schedule));
+    }
+
     @DeleteMapping("/{scheduleId}/group/{groupCode}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ScheduleInfoDto> deleteGroup(@PathVariable Long scheduleId, @PathVariable String groupCode, @AuthenticationPrincipal UserPrincipal userPrincipal) {

@@ -59,8 +59,8 @@ public class ScheduleService {
                 ScheduleGroupWrapper sgw = new ScheduleGroupWrapper(new ScheduleGroupDto(group));
                 try {
                     overlapValidator.add(group);
-                }catch (ScheduleConflictException e){
-                    for(String err : e.getMessages()){
+                } catch (ScheduleConflictException e) {
+                    for (String err : e.getMessages()) {
                         sgw.add(err, MessageType.ERROR);
                     }
                 }
@@ -75,10 +75,10 @@ public class ScheduleService {
         return new ScheduleInfoDto(schedule, wrappers);
     }
 
-    public List<ScheduleInfoDto> getByUserUid_Dto(String uid){
+    public List<ScheduleInfoDto> getByUserUid_Dto(String uid) {
         List<Schedule> data = this.getByUserUid(uid);
         List<ScheduleInfoDto> resp = new LinkedList<>();
-        for(Schedule schedule : data){
+        for (Schedule schedule : data) {
             resp.add(getFromSchedule(schedule));
         }
         return resp;
@@ -86,7 +86,7 @@ public class ScheduleService {
 
     public void validatePermissions(Long id, String uid, boolean isAdmin) {
         Schedule schedule = getById(id);
-        if(!schedule.getUser().getUid().equals(uid) && !isAdmin) {
+        if (!schedule.getUser().getUid().equals(uid) && !isAdmin) {
             throw new ScheduleNotFoundException(id);
         }
     }
@@ -94,6 +94,12 @@ public class ScheduleService {
     public ScheduleInfoDto getById_Dto(Long id) {
         Schedule schedule = getById(id);
         return getFromSchedule(schedule);
+    }
+
+    public Schedule updateTitle(Long id, String title) {
+        Schedule schedule = getById(id);
+        schedule.setTitle(title);
+        return scheduleRepository.save(schedule);
     }
 
     public Schedule createSchedule(String title, String uid) {
@@ -106,10 +112,10 @@ public class ScheduleService {
         return scheduleRepository.save(schedule);
     }
 
-    public Schedule duplicateSchedule(Long id, String uid){
+    public Schedule duplicateSchedule(Long id, String uid) {
         Schedule schedule = getById(id);
         User user = userRepository.findById(uid).orElseThrow(() -> new UserNotFoundException(uid));
-        Schedule copy =  new Schedule();
+        Schedule copy = new Schedule();
         copy.setUser(user);
         copy.setTitle(schedule.getTitle());
         copy.setPensum(schedule.getPensum());
@@ -119,8 +125,8 @@ public class ScheduleService {
     }
 
     public void validateSubjectDuplicate(List<SubjectGroup> groups, Subject subject) {
-        for(SubjectGroup group : groups) {
-            if(group.getSubject().getCode().equals(subject.getCode())) {
+        for (SubjectGroup group : groups) {
+            if (group.getSubject().getCode().equals(subject.getCode())) {
                 throw new ScheduleConflictException("Ya existe una materia con codigo " + subject.getCode() + " en el horario.");
             }
         }
@@ -128,7 +134,8 @@ public class ScheduleService {
 
     /**
      * Tries to add the specified SubjectGroup to the specified Schedule
-     * @param id The id of the Schedule
+     *
+     * @param id    The id of the Schedule
      * @param group The code of the group to be added
      * @return The updated Schedule
      * @throws ScheduleConflictException When it can't be added
@@ -149,7 +156,8 @@ public class ScheduleService {
 
     /**
      * Tries to add any SubjectGroup of the specified Subject to the specified Schedule
-     * @param id the id of the Schedule
+     *
+     * @param id          the id of the Schedule
      * @param subjectCode the code of the Subject
      * @return The updated Schedule
      * @throws ScheduleConflictException if all the SubjectGroups of the specified Subject have any conflict with the actual Schedule
@@ -168,23 +176,23 @@ public class ScheduleService {
         boolean found = false;
 
         List<SubjectGroup> subjectGroups = subject.getGroups();
-        subjectGroups.sort((a,b) -> {
+        subjectGroups.sort((a, b) -> {
             String c1 = a.getCode();
             String c2 = b.getCode();
             boolean sist1 = c1.startsWith("115");
             boolean sist2 = c2.startsWith("115");
-            if(sist1 && !sist2) {
+            if (sist1 && !sist2) {
                 return -1;
             }
-            if(sist2 && !sist1) {
+            if (sist2 && !sist1) {
                 return 1;
             }
             return c1.compareTo(c2);
         });
 
-        for(SubjectGroup subjectGroup : subject.getGroups()) {
+        for (SubjectGroup subjectGroup : subjectGroups) {
             SubjectGroup overlapped = test.overlaps(subjectGroup);
-            if(overlapped != null) {
+            if (overlapped != null) {
                 conflicts.put(subjectGroup.getCode(), overlapped.getCode());
             } else {
                 found = true;
@@ -193,8 +201,12 @@ public class ScheduleService {
             }
         }
 
-        if(!found) {
-            throw new ScheduleConflictException(conflicts);
+        if (!found) {
+            if (!conflicts.isEmpty()) {
+                throw new ScheduleConflictException(conflicts);
+            } else {
+                throw new ScheduleConflictException("La materia con codigo " + subjectCode + " no tiene grupos válidos.");
+            }
         }
 
         return scheduleRepository.save(schedule);
@@ -207,13 +219,13 @@ public class ScheduleService {
         return scheduleRepository.save(schedule);
     }
 
-    public Schedule deleteFromSchedule(Long id, String groupCode){
+    public Schedule deleteFromSchedule(Long id, String groupCode) {
         Schedule schedule = getById(id);
         schedule.getCodes().remove(groupCode);
         return scheduleRepository.save(schedule);
     }
 
-    public void deleteSchedule(Long id){
+    public void deleteSchedule(Long id) {
         Schedule schedule = getById(id);
         scheduleRepository.delete(schedule);
     }
