@@ -48,7 +48,7 @@ public class ScheduleController {
 
     @GetMapping("/my")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<List<ScheduleInfoDto>> getMySchedules(@PathVariable Long id, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+    public ResponseEntity<List<ScheduleInfoDto>> getMySchedules(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         String uid = userPrincipal.getUsername();
         return ResponseEntity.ok(scheduleService.getByUserUid_Dto(uid));
     }
@@ -57,7 +57,7 @@ public class ScheduleController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ScheduleInfoDto> createSchedule(@RequestBody ScheduleCreationDto dto, @AuthenticationPrincipal UserPrincipal userPrincipal) {
         String uid = userPrincipal.getUsername();
-        Schedule resp = scheduleService.createSchedule(dto.getTitle(), uid);
+        Schedule resp = scheduleService.createSchedule(uid, dto.getTitle());
         return ResponseEntity.ok(scheduleService.getFromSchedule(resp));
     }
 
