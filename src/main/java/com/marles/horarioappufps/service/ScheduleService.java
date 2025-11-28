@@ -5,12 +5,10 @@ import com.marles.horarioappufps.dto.response.schedule.ScheduleGroupDto;
 import com.marles.horarioappufps.dto.response.schedule.ScheduleGroupWrapper;
 import com.marles.horarioappufps.dto.response.schedule.ScheduleInfoDto;
 import com.marles.horarioappufps.exception.*;
-import com.marles.horarioappufps.model.Schedule;
-import com.marles.horarioappufps.model.Subject;
-import com.marles.horarioappufps.model.SubjectGroup;
-import com.marles.horarioappufps.model.User;
+import com.marles.horarioappufps.model.*;
 import com.marles.horarioappufps.repository.*;
 import com.marles.horarioappufps.util.OverlapValidator;
+import com.marles.horarioappufps.util.RequisiteValidator;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,10 +145,16 @@ public class ScheduleService {
 
         validateSubjectDuplicate(groups, subjectGroup.getSubject());
 
+        Pensum pensum = schedule.getPensum();
+        RequisiteValidator test2 = new RequisiteValidator(pensum);
+        test2.addAll(groups.stream().map(SubjectGroup::getSubject).toList());
+        test2.add(subjectGroup.getSubject());
+        schedule.getCodes().add(subjectGroup.getCode());
+
         OverlapValidator test = new OverlapValidator();
         test.addList(groups);
         test.add(subjectGroup);
-        schedule.getCodes().add(subjectGroup.getCode());
+
         return scheduleRepository.save(schedule);
     }
 
@@ -165,9 +169,15 @@ public class ScheduleService {
     public Schedule addSubject(Long id, String subjectCode) throws ScheduleConflictException {
         Schedule schedule = getById(id);
         Subject subject = subjectRepository.findByCode(subjectCode).orElseThrow(() -> new SubjectNotFoundException(subjectCode));
+        List<SubjectGroup> groups = getFromList(schedule.getCodes());
+
+        Pensum pensum = schedule.getPensum();
+        RequisiteValidator test2 = new RequisiteValidator(pensum);
+        test2.addAll(groups.stream().map(SubjectGroup::getSubject).toList());
+        test2.add(subject);
 
         OverlapValidator test = new OverlapValidator();
-        List<SubjectGroup> groups = getFromList(schedule.getCodes());
+
         validateSubjectDuplicate(groups, subject);
         test.addList(groups);
 

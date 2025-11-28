@@ -7,10 +7,7 @@ import com.marles.horarioappufps.model.Subject;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Data
 public class RequisiteValidator {
@@ -65,5 +62,15 @@ public class RequisiteValidator {
         }
         addRecursively(subject, subject);
         subjects.add(code);
+    }
+
+    public void add(Subject subject) throws RequisiteConflictException {
+        this.add(subject.getCode());
+    }
+
+    public void addAll(List<Subject> subjects) throws RequisiteConflictException {
+        for (Subject subject : subjects) {
+            this.add(subject);
+        }
     }
 }
