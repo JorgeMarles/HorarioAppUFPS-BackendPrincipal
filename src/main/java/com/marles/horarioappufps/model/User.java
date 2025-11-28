@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -33,4 +34,32 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedules = new LinkedList<>();
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "user_subject",
+        joinColumns = @JoinColumn(name = "user_uid"),
+        inverseJoinColumns = @JoinColumn(name = "subject_id")
+    )
+    private Set<Subject> subjects = new HashSet<>();
+
+    public void addSubject(Subject subject) {
+        if (subject == null) return;
+        if (subjects == null) subjects = new HashSet<>();
+        if (subjects.add(subject)) {
+            subject.getUsers().add(this);
+        }
+    }
+
+    public void removeSubject(Subject subject) {
+        if (subject == null || subjects == null) return;
+        if (subjects.remove(subject)) {
+            subject.getUsers().remove(this);
+        }
+    }
+
+    public boolean containsSubject(Subject subject) {
+        if (subject == null) return false;
+        return subjects.contains(subject);
+    }
 }

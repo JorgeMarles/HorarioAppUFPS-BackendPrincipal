@@ -7,6 +7,7 @@ import com.marles.horarioappufps.dto.request.SubjectGroupCreationDto;
 import com.marles.horarioappufps.dto.response.SubjectItemDto;
 import com.marles.horarioappufps.exception.PensumNotFoundException;
 import com.marles.horarioappufps.exception.ScheduleConflictException;
+import com.marles.horarioappufps.exception.SubjectNotFoundException;
 import com.marles.horarioappufps.model.Pensum;
 import com.marles.horarioappufps.model.Session;
 import com.marles.horarioappufps.model.Subject;
@@ -77,6 +78,14 @@ public class PensumService {
         processSubjects(pensum, pensumCreationDto.getSubjects(), pensumCreationDto.isUpdateTeachers());
 
         return pensum;
+    }
+
+    public Subject findByCode(String code) {
+        return subjectRepository.findByCode(code).orElseThrow(() -> new SubjectNotFoundException(code));
+    }
+
+    public Set<Subject> findUnlocks(Subject subject){
+        return subjectRepository.findDistinctByRequisites_Id(subject.getId());
     }
 
     private void processSubjects(Pensum pensum, List<SubjectCreationDto> subjectCreationDtos, boolean updateTeachers) {
