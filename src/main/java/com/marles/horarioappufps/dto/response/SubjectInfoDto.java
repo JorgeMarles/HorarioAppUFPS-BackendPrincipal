@@ -51,6 +51,6 @@ public class SubjectInfoDto {
     public SubjectInfoDto(Subject subject, User user, int credits){
         this(subject);
         this.isCompleted = user.containsSubject(subject);
-        this.canEnroll = user.canEnroll(subject, credits);
+        this.canEnroll = user.canEnroll(subject, credits) && !subject.getGroups().isEmpty();
     }
 }
