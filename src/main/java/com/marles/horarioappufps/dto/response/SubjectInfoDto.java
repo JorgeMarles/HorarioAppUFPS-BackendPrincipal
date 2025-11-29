@@ -23,6 +23,8 @@ public class SubjectInfoDto {
     private int requiredCredits;
     @JsonProperty("isCompleted")
     private boolean isCompleted;
+    @JsonProperty("canEnroll")
+    private boolean canEnroll;
     private SubjectType type;
     private List<SubjectGroupInfoDto> groups = new LinkedList<>();
     private List<SubjectItemDto> requisites = new LinkedList<>();
@@ -46,8 +48,9 @@ public class SubjectInfoDto {
         }
     }
 
-    public SubjectInfoDto(Subject subject, User user){
+    public SubjectInfoDto(Subject subject, User user, int credits){
         this(subject);
         this.isCompleted = user.containsSubject(subject);
+        this.canEnroll = user.canEnroll(subject, credits);
     }
 }

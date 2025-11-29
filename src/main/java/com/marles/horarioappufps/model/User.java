@@ -37,9 +37,9 @@ public class User {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-        name = "user_subject",
-        joinColumns = @JoinColumn(name = "user_uid"),
-        inverseJoinColumns = @JoinColumn(name = "subject_id")
+            name = "user_subject",
+            joinColumns = @JoinColumn(name = "user_uid"),
+            inverseJoinColumns = @JoinColumn(name = "subject_id")
     )
     private Set<Subject> subjects = new HashSet<>();
 
@@ -61,5 +61,16 @@ public class User {
     public boolean containsSubject(Subject subject) {
         if (subject == null) return false;
         return subjects.contains(subject);
+    }
+
+    public boolean canEnroll(Subject subject, int credits) {
+        if (subject == null) return false;
+        if (subjects.contains(subject)) return false;
+        boolean ans = subject.getRequiredCredits() <= credits;
+        for(Subject requisite : subject.getRequisites()) {
+            ans = ans && this.containsSubject(requisite);
+            if(!ans) return false;
+        }
+        return ans;
     }
 }

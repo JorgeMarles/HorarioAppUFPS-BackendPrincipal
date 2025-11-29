@@ -31,9 +31,15 @@ public class PensumInfoDto {
         this.id = pensum.getId();
         this.name = pensum.getName();
         this.semesters = pensum.getSemesters();
+        int credits = 0;
+        for(Subject subject : pensum.getSubjects()) {
+            if(user.containsSubject(subject)) {
+                credits += subject.getCredits();
+            }
+        }
 
         for(Subject subject : pensum.getSubjects()) {
-            this.subjects.add(new SubjectInfoDto(subject, user));
+            this.subjects.add(new SubjectInfoDto(subject, user, credits));
         }
     }
 
