@@ -2,6 +2,7 @@ package com.marles.horarioappufps.dto.response;
 
 import com.marles.horarioappufps.model.Pensum;
 import com.marles.horarioappufps.model.Subject;
+import com.marles.horarioappufps.model.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -23,6 +24,22 @@ public class PensumInfoDto {
 
         for(Subject subject : pensum.getSubjects()) {
             this.subjects.add(new SubjectInfoDto(subject));
+        }
+    }
+
+    public PensumInfoDto(Pensum pensum, User user) {
+        this.id = pensum.getId();
+        this.name = pensum.getName();
+        this.semesters = pensum.getSemesters();
+        int credits = 0;
+        for(Subject subject : pensum.getSubjects()) {
+            if(user.containsSubject(subject)) {
+                credits += subject.getCredits();
+            }
+        }
+
+        for(Subject subject : pensum.getSubjects()) {
+            this.subjects.add(new SubjectInfoDto(subject, user, credits));
         }
     }
 

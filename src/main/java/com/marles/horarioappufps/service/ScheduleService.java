@@ -241,11 +241,11 @@ public class ScheduleService {
     }
 
     private List<SubjectGroup> getFromList(Set<String> codes) {
-        return codes.stream().map(code -> {
-            return subjectGroupRepository.findByCode(code).orElseThrow(() -> {
-                return new GroupNotFoundException(code);
-            });
-        }).toList();
+        return codes.stream().map(code ->
+            subjectGroupRepository.findByCode(code).orElseThrow(() ->
+                new GroupNotFoundException(code)
+            )
+        ).toList();
     }
 
 }
