@@ -58,6 +58,7 @@ public class PensumService {
         PensumInfoDto pensumInfoDto = new PensumInfoDto(pensum, user);
 
         pensumInfoDto.sortByDepth();
+        pensumInfoDto.updateIsCritical();
         return pensumInfoDto;
     }
 
@@ -92,6 +93,10 @@ public class PensumService {
 
     public Subject findByCode(String code) {
         return subjectRepository.findByCode(code).orElseThrow(() -> new SubjectNotFoundException(code));
+    }
+
+    public Subject findByCodeOrNull(String code) {
+        return subjectRepository.findByCode(code).orElse(null);
     }
 
     public Set<Subject> findUnlocks(Subject subject){
