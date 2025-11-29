@@ -94,6 +94,10 @@ public class PensumService {
         return subjectRepository.findByCode(code).orElseThrow(() -> new SubjectNotFoundException(code));
     }
 
+    public Subject findByCodeOrNull(String code) {
+        return subjectRepository.findByCode(code).orElse(null);
+    }
+
     public Set<Subject> findUnlocks(Subject subject){
         return subjectRepository.findDistinctByRequisites_Id(subject.getId());
     }
