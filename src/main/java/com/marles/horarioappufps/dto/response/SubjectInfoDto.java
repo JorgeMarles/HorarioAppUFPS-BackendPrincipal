@@ -25,6 +25,8 @@ public class SubjectInfoDto {
     private boolean isCompleted;
     @JsonProperty("canEnroll")
     private boolean canEnroll;
+    @JsonProperty("isCritical")
+    private boolean isCritical;
     private SubjectType type;
     private List<SubjectGroupInfoDto> groups = new LinkedList<>();
     private List<SubjectItemDto> requisites = new LinkedList<>();

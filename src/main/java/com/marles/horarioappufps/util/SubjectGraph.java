@@ -34,16 +34,16 @@ public class SubjectGraph {
      * @param to   the code of the subject
      */
     public void addEdge(String from, String to) {
-        SubjectNode subjectNode = nodes.get(from);
-        SubjectNode requisiteNode = nodes.get(to);
-        if (subjectNode == null) {
-            subjectNode = addNode(from);
+        SubjectNode fromNode = nodes.get(from);
+        SubjectNode toNode = nodes.get(to);
+        if (fromNode == null) {
+            fromNode = addNode(from);
         }
-        if (requisiteNode == null) {
-            requisiteNode = addNode(to);
+        if (toNode == null) {
+            toNode = addNode(to);
         }
 
-        subjectNode.addEdge(requisiteNode);
+        fromNode.addEdge(toNode);
     }
 
     @Getter

@@ -58,6 +58,7 @@ public class PensumService {
         PensumInfoDto pensumInfoDto = new PensumInfoDto(pensum, user);
 
         pensumInfoDto.sortByDepth();
+        pensumInfoDto.updateIsCritical();
         return pensumInfoDto;
     }
 
