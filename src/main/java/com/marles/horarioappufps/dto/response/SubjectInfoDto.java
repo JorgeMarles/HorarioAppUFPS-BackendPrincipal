@@ -1,8 +1,10 @@
 package com.marles.horarioappufps.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.marles.horarioappufps.model.Subject;
 import com.marles.horarioappufps.model.SubjectGroup;
 import com.marles.horarioappufps.model.SubjectType;
+import com.marles.horarioappufps.model.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,6 +21,8 @@ public class SubjectInfoDto {
     private int hours;
     private int semester;
     private int requiredCredits;
+    @JsonProperty("isCompleted")
+    private boolean isCompleted;
     private SubjectType type;
     private List<SubjectGroupInfoDto> groups = new LinkedList<>();
     private List<SubjectItemDto> requisites = new LinkedList<>();
@@ -40,5 +44,10 @@ public class SubjectInfoDto {
         for (Subject requisite : subject.getRequisites()) {
             this.requisites.add(new SubjectItemDto(requisite));
         }
+    }
+
+    public SubjectInfoDto(Subject subject, User user){
+        this(subject);
+        this.isCompleted = user.containsSubject(subject);
     }
 }

@@ -60,6 +60,11 @@ public class Subject {
     @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<SubjectGroup> groups = new LinkedList<>();
 
+    @Override
+    public int hashCode(){
+        return this.getId().hashCode();
+    }
+
     public void addUser(User user) {
         if (user == null) return;
         if (users == null) users = new HashSet<>();

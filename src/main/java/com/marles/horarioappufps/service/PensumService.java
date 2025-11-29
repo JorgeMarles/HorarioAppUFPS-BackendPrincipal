@@ -4,14 +4,12 @@ import com.marles.horarioappufps.dto.request.PensumCreationDto;
 import com.marles.horarioappufps.dto.request.SessionCreationDto;
 import com.marles.horarioappufps.dto.request.SubjectCreationDto;
 import com.marles.horarioappufps.dto.request.SubjectGroupCreationDto;
+import com.marles.horarioappufps.dto.response.PensumInfoDto;
 import com.marles.horarioappufps.dto.response.SubjectItemDto;
 import com.marles.horarioappufps.exception.PensumNotFoundException;
 import com.marles.horarioappufps.exception.ScheduleConflictException;
 import com.marles.horarioappufps.exception.SubjectNotFoundException;
-import com.marles.horarioappufps.model.Pensum;
-import com.marles.horarioappufps.model.Session;
-import com.marles.horarioappufps.model.Subject;
-import com.marles.horarioappufps.model.SubjectGroup;
+import com.marles.horarioappufps.model.*;
 import com.marles.horarioappufps.repository.PensumRepository;
 import com.marles.horarioappufps.repository.SessionRepository;
 import com.marles.horarioappufps.repository.SubjectGroupRepository;
@@ -33,9 +31,34 @@ public class PensumService {
     private final SubjectRepository subjectRepository;
     private final SubjectGroupRepository subjectGroupRepository;
     private final SessionRepository sessionRepository;
+    private final UserService userService;
+
+    @Autowired
+    public PensumService(
+            PensumRepository pensumRepository,
+            SubjectRepository subjectRepository,
+            SubjectGroupRepository subjectGroupRepository,
+            SessionRepository sessionRepository,
+            UserService userService
+    ) {
+        this.pensumRepository = pensumRepository;
+        this.subjectRepository = subjectRepository;
+        this.subjectGroupRepository = subjectGroupRepository;
+        this.sessionRepository = sessionRepository;
+        this.userService = userService;
+    }
 
     public Pensum getPensum() {
         return getOrCreatePensum(1L);
+    }
+
+    public PensumInfoDto getPensumInfoDto(String uid) {
+        Pensum pensum = getPensum();
+        User user = userService.getUserByUid(uid);
+        PensumInfoDto pensumInfoDto = new PensumInfoDto(pensum, user);
+
+        pensumInfoDto.sortByDepth();
+        return pensumInfoDto;
     }
 
     public Pensum getPensum(Long id) {
@@ -49,19 +72,6 @@ public class PensumService {
             return p;
         });
         return pensumRepository.save(pensum);
-    }
-
-    @Autowired
-    public PensumService(
-            PensumRepository pensumRepository,
-            SubjectRepository subjectRepository,
-            SubjectGroupRepository subjectGroupRepository,
-            SessionRepository sessionRepository
-    ) {
-        this.pensumRepository = pensumRepository;
-        this.subjectRepository = subjectRepository;
-        this.subjectGroupRepository = subjectGroupRepository;
-        this.sessionRepository = sessionRepository;
     }
 
     @Transactional
