@@ -27,6 +27,7 @@ public class ScheduleService {
     private final SubjectRepository subjectRepository;
     private final PensumRepository pensumRepository;
     private final SubjectGroupRepository subjectGroupRepository;
+    private final int MAX_CREDITS = 20;
 
     @Autowired
     public ScheduleService(ScheduleRepository scheduleRepository, UserRepository userRepository, SubjectRepository subjectRepository, PensumRepository pensumRepository, SubjectGroupRepository subjectGroupRepository) {
@@ -143,6 +144,8 @@ public class ScheduleService {
         SubjectGroup subjectGroup = subjectGroupRepository.findByCode(group).orElseThrow(() -> new GroupNotFoundException(group));
         List<SubjectGroup> groups = getFromList(schedule.getCodes());
 
+        validateCredits(groups, subjectGroup.getSubject().getCredits());
+
         validateSubjectDuplicate(groups, subjectGroup.getSubject());
 
         Pensum pensum = schedule.getPensum();
@@ -158,6 +161,16 @@ public class ScheduleService {
         return scheduleRepository.save(schedule);
     }
 
+    private void validateCredits(List<SubjectGroup> groups, int credits) {
+        int amount = 0;
+        for (SubjectGroup group : groups) {
+            amount = group.getSubject().getCredits();
+        }
+        if(amount + credits > MAX_CREDITS){
+            throw new ScheduleConflictException("Supera el tope de créditos para esta materia");
+        }
+    }
+
     /**
      * Tries to add any SubjectGroup of the specified Subject to the specified Schedule
      *
@@ -170,6 +183,8 @@ public class ScheduleService {
         Schedule schedule = getById(id);
         Subject subject = subjectRepository.findByCode(subjectCode).orElseThrow(() -> new SubjectNotFoundException(subjectCode));
         List<SubjectGroup> groups = getFromList(schedule.getCodes());
+
+        validateCredits(groups, subject.getCredits());
 
         Pensum pensum = schedule.getPensum();
         RequisiteValidator test2 = new RequisiteValidator(pensum);
