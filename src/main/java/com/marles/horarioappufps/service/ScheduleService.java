@@ -124,11 +124,18 @@ public class ScheduleService {
     }
 
     public void validateSubjectDuplicate(List<SubjectGroup> groups, Subject subject) {
+        if (this.containsSubjectDuplicate(groups, subject) != null) {
+            throw new ScheduleConflictException("Ya existe una materia con codigo " + subject.getCode() + " en el horario.");
+        }
+    }
+
+    public String containsSubjectDuplicate(List<SubjectGroup> groups, Subject subject) {
         for (SubjectGroup group : groups) {
             if (group.getSubject().getCode().equals(subject.getCode())) {
-                throw new ScheduleConflictException("Ya existe una materia con codigo " + subject.getCode() + " en el horario.");
+                return group.getCode();
             }
         }
+        return null;
     }
 
     /**
@@ -145,8 +152,11 @@ public class ScheduleService {
         List<SubjectGroup> groups = getFromList(schedule.getCodes());
 
         validateCredits(groups, subjectGroup.getSubject().getCredits());
-
-        validateSubjectDuplicate(groups, subjectGroup.getSubject());
+        String current = containsSubjectDuplicate(groups, subjectGroup.getSubject());
+        if (current != null) {
+            schedule = this.deleteFromSchedule(id, current);
+            groups = getFromList(schedule.getCodes());
+        }
 
         Pensum pensum = schedule.getPensum();
         RequisiteValidator test2 = new RequisiteValidator(pensum);
@@ -166,7 +176,7 @@ public class ScheduleService {
         for (SubjectGroup group : groups) {
             amount = group.getSubject().getCredits();
         }
-        if(amount + credits > MAX_CREDITS){
+        if (amount + credits > MAX_CREDITS) {
             throw new ScheduleConflictException("Supera el tope de créditos para esta materia");
         }
     }
@@ -257,9 +267,9 @@ public class ScheduleService {
 
     private List<SubjectGroup> getFromList(Set<String> codes) {
         return codes.stream().map(code ->
-            subjectGroupRepository.findByCode(code).orElseThrow(() ->
-                new GroupNotFoundException(code)
-            )
+                subjectGroupRepository.findByCode(code).orElseThrow(() ->
+                        new GroupNotFoundException(code)
+                )
         ).toList();
     }
 
