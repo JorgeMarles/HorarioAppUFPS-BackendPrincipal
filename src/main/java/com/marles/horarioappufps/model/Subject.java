@@ -37,7 +37,7 @@ public class Subject {
     @Column(nullable = false)
     private int semester;
 
-    @Column(nullable = true, columnDefinition = "INTEGER DEFAULT 0")
+    @Column(nullable = false)
     private int requiredCredits;
 
     @ManyToOne(fetch = FetchType.LAZY)
