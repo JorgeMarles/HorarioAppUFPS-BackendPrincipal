@@ -20,6 +20,8 @@ RUN mvn clean package -DskipTests
 ### STAGE 2:DEPLOY ###
 FROM amazoncorretto:17-alpine AS deploy
 
+RUN apk add --no-cache curl
+
 # Create app directory
 WORKDIR /app
 
