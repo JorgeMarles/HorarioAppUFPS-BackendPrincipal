@@ -7,15 +7,21 @@ import com.marles.horarioappufps.exception.UserException;
 import com.marles.horarioappufps.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class FirebaseAuthService {
+    @Value("${ALLOWED_EMAIL_DOMAINS}")
+    private List<String> allowedEmailDomains;
 
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-z]+@ufps.edu.co$");
+    private static final Pattern EMAIL_DOMAIN_PATTERN = Pattern.compile("(?<=@)\\w+(\\.\\w+)+$");
 
     @Autowired
     private UserService userService;
@@ -28,9 +34,26 @@ public class FirebaseAuthService {
         FirebaseToken token = verifyToken(idToken);
         String uid = token.getUid();
         String email = token.getEmail();
-        if(!EMAIL_PATTERN.matcher(email).matches()) {
-            throw new UserException("El correo "+email+" no es un correo institucional UFPS.");
+
+        Matcher matcher = EMAIL_DOMAIN_PATTERN.matcher(email);
+
+        if (!matcher.find()) {
+            throw new UserException("Email inválido");
         }
+
+        String domain = matcher.group();
+
+        if (!allowedEmailDomains.contains("*") &&
+                !allowedEmailDomains.contains(domain)) {
+
+            String message = "Solo se permiten correos " +
+                    allowedEmailDomains.stream()
+                            .map(d -> "@" + d)
+                            .collect(Collectors.joining(", "));
+
+            throw new UserException(message);
+        }
+
         String name = token.getName();
         return userService.getOrCreateUser(uid, email, name);
     }
