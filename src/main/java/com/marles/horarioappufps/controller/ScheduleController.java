@@ -101,6 +101,14 @@ public class ScheduleController {
         return ResponseEntity.ok(scheduleService.getFromSchedule(schedule));
     }
 
+    @PatchMapping("/{scheduleId}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<ScheduleInfoDto> toggleFreemode(@PathVariable Long scheduleId, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        validatePermissions(scheduleId, userPrincipal);
+        Schedule schedule = scheduleService.toggleFreemode(scheduleId);
+        return ResponseEntity.ok(scheduleService.getFromSchedule(schedule));
+    }
+
     @DeleteMapping("/{scheduleId}/group/{groupCode}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ScheduleInfoDto> deleteGroup(@PathVariable Long scheduleId, @PathVariable String groupCode, @AuthenticationPrincipal UserPrincipal userPrincipal) {

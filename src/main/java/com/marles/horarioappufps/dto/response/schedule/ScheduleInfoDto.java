@@ -13,12 +13,14 @@ public class ScheduleInfoDto {
     private Long id;
     private String title;
     private int credits;
+    private Boolean freeMode;
     private List<ScheduleGroupWrapper> subjects = new LinkedList<>();
 
     public ScheduleInfoDto(Schedule schedule, List<ScheduleGroupWrapper> subjectGroups) {
         this.id = schedule.getId();
         this.title = schedule.getTitle();
         this.credits = 0;
+        this.freeMode = schedule.getFreeMode();
         for(ScheduleGroupWrapper subjectGroup : subjectGroups){
             this.subjects.add(subjectGroup);
             this.credits += subjectGroup.getGroup().getCredits();

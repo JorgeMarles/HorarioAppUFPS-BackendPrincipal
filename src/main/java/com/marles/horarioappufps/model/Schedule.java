@@ -17,6 +17,8 @@ public class Schedule {
 
     private String title;
 
+    private Boolean freeMode;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pensum_id", nullable = false)
     private Pensum pensum;

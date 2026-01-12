@@ -101,12 +101,19 @@ public class ScheduleService {
         return scheduleRepository.save(schedule);
     }
 
+    public Schedule toggleFreemode(Long id) {
+        Schedule schedule = getById(id);
+        schedule.setFreeMode(!schedule.getFreeMode());
+        return scheduleRepository.save(schedule);
+    }
+
     public Schedule createSchedule(String title, String uid) {
         Schedule schedule = new Schedule();
         User user = userRepository.findById(uid).orElseThrow(() -> new UserNotFoundException(uid));
         schedule.setUser(user);
         schedule.setPensum(pensumRepository.findById(1L).orElseThrow(() -> new PensumNotFoundException(1L)));
         schedule.setTitle(title);
+        schedule.setFreeMode(false);
 
         return scheduleRepository.save(schedule);
     }
@@ -118,6 +125,7 @@ public class ScheduleService {
         copy.setUser(user);
         copy.setTitle(schedule.getTitle());
         copy.setPensum(schedule.getPensum());
+        copy.setFreeMode(schedule.getFreeMode());
         copy.setCodes(schedule.getCodes().stream().map(e -> e).collect(Collectors.toSet()));
 
         return scheduleRepository.save(copy);
