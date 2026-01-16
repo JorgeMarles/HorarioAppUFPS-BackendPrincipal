@@ -20,7 +20,7 @@ public class ScheduleGroupWrapper {
         this.group = new ScheduleGroupDto();
         this.group.setId(0L);
         this.group.setCode(code);
-        this.group.setName("Grupo Inexistente");
+        this.group.setName("Grupo "+code+" Inexistente");
     }
 
     public void add(String message, MessageType messageType) {

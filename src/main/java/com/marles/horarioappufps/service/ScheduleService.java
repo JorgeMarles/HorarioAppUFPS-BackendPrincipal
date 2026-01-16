@@ -66,7 +66,7 @@ public class ScheduleService {
                 return sgw;
             } catch (GroupNotFoundException e) {
                 ScheduleGroupWrapper sgw = new ScheduleGroupWrapper(code);
-                sgw.add("Grupo no encontrado o eliminado", MessageType.ERROR);
+                sgw.add("Grupo "+code+" no encontrado o eliminado", MessageType.ERROR);
                 return sgw;
             }
         }).toList();
