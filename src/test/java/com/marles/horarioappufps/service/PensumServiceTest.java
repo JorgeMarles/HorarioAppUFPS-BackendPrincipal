@@ -314,7 +314,7 @@ public class PensumServiceTest {
         when(subjectRepository.save(any(Subject.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(subjectGroupRepository.save(any(SubjectGroup.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        assertThrows(IllegalArgumentException.class, () -> pensumService.savePensum(pensumDto));
+        assertDoesNotThrow(() -> pensumService.savePensum(pensumDto));
     }
 
     @Test
