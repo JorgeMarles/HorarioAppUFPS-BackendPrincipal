@@ -10,10 +10,7 @@ import com.marles.horarioappufps.model.Pensum;
 import com.marles.horarioappufps.model.Session;
 import com.marles.horarioappufps.model.Subject;
 import com.marles.horarioappufps.model.SubjectGroup;
-import com.marles.horarioappufps.repository.PensumRepository;
-import com.marles.horarioappufps.repository.SessionRepository;
-import com.marles.horarioappufps.repository.SubjectGroupRepository;
-import com.marles.horarioappufps.repository.SubjectRepository;
+import com.marles.horarioappufps.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -42,6 +39,18 @@ public class PensumServiceTest {
 
     @Mock
     private SessionRepository sessionRepository;
+
+    @Mock
+    private PensumChangeService pensumChangeService;
+
+    @Mock
+    private PensumChangeLogRepository pensumChangeLogRepository;
+
+    @Mock
+    private SubjectChangeLogRepository subjectChangeLogRepository;
+
+    @Mock
+    private GroupChangeLogRepository groupChangeLogRepository;
 
     @BeforeEach
     public void init() {
