@@ -32,6 +32,7 @@ public class PensumService {
     private final SubjectGroupRepository subjectGroupRepository;
     private final SessionRepository sessionRepository;
     private final UserService userService;
+    private final PensumChangeService pensumChangeService;
 
     @Autowired
     public PensumService(
@@ -39,13 +40,15 @@ public class PensumService {
             SubjectRepository subjectRepository,
             SubjectGroupRepository subjectGroupRepository,
             SessionRepository sessionRepository,
-            UserService userService
+            UserService userService,
+            PensumChangeService pensumChangeService
     ) {
         this.pensumRepository = pensumRepository;
         this.subjectRepository = subjectRepository;
         this.subjectGroupRepository = subjectGroupRepository;
         this.sessionRepository = sessionRepository;
         this.userService = userService;
+        this.pensumChangeService = pensumChangeService;
     }
 
     public Pensum getPensum() {
@@ -81,12 +84,15 @@ public class PensumService {
             pensumCreationDto.setId(1L);
         }
         Pensum pensum = getOrCreatePensum(pensumCreationDto.getId());
+        Pensum old = pensum.copy();
 
         updateFields(pensum, pensumCreationDto);
 
         pensum = pensumRepository.save(pensum);
 
         processSubjects(pensum, pensumCreationDto.getSubjects(), pensumCreationDto.isUpdateTeachers());
+
+        pensumChangeService.registerChanges(old, pensum);
 
         return pensum;
     }
