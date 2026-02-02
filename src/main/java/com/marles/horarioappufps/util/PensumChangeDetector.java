@@ -1,6 +1,8 @@
 package com.marles.horarioappufps.util;
 
 import com.marles.horarioappufps.dto.response.SessionInfoDto;
+import com.marles.horarioappufps.dto.response.SubjectInfoDto;
+import com.marles.horarioappufps.dto.response.SubjectItemDto;
 import com.marles.horarioappufps.model.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -66,7 +68,9 @@ public class PensumChangeDetector {
         addIfChanged(changedValues, "type", old.getType(), nw.getType());
 
         if (differsArraySubject(old.getRequisites(), nw.getRequisites())) {
-            changedValues.put("requisites", new ChangedValue<>(old.getRequisites(), nw.getRequisites()));
+            changedValues.put("requisites",
+                    new ChangedValue<>(old.getRequisites().stream().map(SubjectItemDto::new).toList(),
+                                       nw.getRequisites().stream().map(SubjectItemDto::new).toList()));
         }
 
         boolean changed = !changedValues.isEmpty();
@@ -138,7 +142,7 @@ public class PensumChangeDetector {
         }
 
         if (differsArraySessions(old.getSessions(), nw.getSessions())) {
-            changedValues.put("requisites", new ChangedValue<>(
+            changedValues.put("sessions", new ChangedValue<>(
                     old.getSessions().stream().map(SessionInfoDto::new).toList(),
                     nw.getSessions().stream().map(SessionInfoDto::new).toList()));
         }
@@ -158,6 +162,7 @@ public class PensumChangeDetector {
         List<String> codesB = new ArrayList<>(b.stream().map(Subject::getCode).toList());
         codesA.sort(String.CASE_INSENSITIVE_ORDER);
         codesB.sort(String.CASE_INSENSITIVE_ORDER);
+        log.info("CodesA {} + codesB {}", codesA.toString(), codesB.toString());
         return !codesA.equals(codesB);
     }
 
